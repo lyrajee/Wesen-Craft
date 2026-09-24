@@ -1,0 +1,572 @@
+{
+  "meta": {
+    "name": "Wesen Craft Design DNA",
+    "description": "Neutral operational design system for Wesen Craft: warm greige, white, near-black, and neutral grey. Reference observations are separated from user-selected Wesen adaptations.",
+    "source_references": [
+      {
+        "type": "image",
+        "path": "/var/folders/_d/2k6yhsf11jx14nksgxxglc840000gn/T/codex-clipboard-06906dcf-474a-473f-83ac-f10bd0c643a0.png",
+        "role": "provided screenshot; visual source used for this analysis"
+      },
+      {
+        "type": "image",
+        "path": "design/references/variant-dashboard.png",
+        "role": "requested primary reference; not present in the repository workspace, so not independently inspected"
+      },
+      {
+        "type": "url",
+        "url": "https://variant.com/chat/c1cdd8e1-c45f-4b99-8d94-2d2d218e17fc",
+        "role": "requested secondary reference; unavailable to web fetch, behavior/content not inferred"
+      }
+    ],
+    "created_at": "2026-09-24",
+    "confidence_notes": "The exact neutral palette values in this refinement were explicitly selected by the user and are not measured from the reference. Reference-observed traits are separately recorded. The supplied reference screenshot includes visible user annotations; these are excluded from the design system."
+  },
+  "design_system": {
+    "color": {
+      "palette_type": "Warm greige, white, near-black, and neutral grey; no decorative accent color",
+      "primary": {
+        "hex": "#1C1C1E",
+        "role": "Near-black primary actions and primary text"
+      },
+      "primary_hover": {
+        "hex": "#343436",
+        "role": "Hover state for near-black primary actions"
+      },
+      "primary_pressed": {
+        "hex": "#0E0E0F",
+        "role": "Pressed state for near-black primary actions"
+      },
+      "sidebar": {
+        "hex": "#F3F3F0",
+        "role": "Warm greige sidebar surface"
+      },
+      "quiet_surface": {
+        "hex": "#FAFAF9",
+        "role": "Quiet neutral surface and secondary hover"
+      },
+      "selected_surface": {
+        "hex": "#E7E7E4",
+        "role": "Neutral selected navigation surface"
+      },
+      "hover_surface": {
+        "hex": "#EEEEEB",
+        "role": "Neutral hover surface"
+      },
+      "subtle_hover_surface": {
+        "hex": "#F7F7F5",
+        "role": "Subtle neutral hover surface"
+      },
+      "border": {
+        "hex": "#E6E6E3",
+        "role": "Subtle separators and ordinary borders"
+      },
+      "strong_border": {
+        "hex": "#D2D2CE",
+        "role": "Control boundary and stronger neutral border"
+      },
+      "muted_text": {
+        "hex": "#686966",
+        "role": "Secondary and metadata text"
+      },
+      "focus_border": {
+        "hex": "#777873",
+        "role": "Neutral focus border"
+      },
+      "focus_ring": "rgba(28, 28, 30, 0.14)",
+      "white": {
+        "hex": "#FFFFFF",
+        "role": "Work surfaces and outlined secondary actions"
+      },
+      "semantic": {
+        "success": "Use only for actual successful status and pair with text or icon.",
+        "warning": "Use only for actual warning status and pair with text or icon.",
+        "error": "Use only for actual error status and pair with text or icon.",
+        "info": "Neutral grey; use only for actual informational status and pair with text or icon."
+      },
+      "contrast_strategy": "Use near-black text and primary actions on white and warm greige surfaces. Routine navigation, hover, focus, links, tabs, refresh controls, and selection use neutral grey values only. Semantic colors appear only for actual status.",
+      "measurement_status": "All exact values in this revision are explicitly user-selected design values, not measured from the reference screenshot. Reference-observed traits remain in reference_observed; Wesen-specific implementation rules remain in Wesen adaptation fields."
+    },
+    "typography": {
+      "type_scale": {
+        "display": {
+          "size": "24px",
+          "weight": 600,
+          "line_height": 1.25,
+          "tracking": "-0.02em",
+          "role": "Upper bound for page title; no oversized landing-page display style"
+        },
+        "heading_1": {
+          "size": "22px",
+          "weight": 600,
+          "line_height": 1.3,
+          "tracking": "-0.015em",
+          "role": "Page title"
+        },
+        "heading_2": {
+          "size": "17px",
+          "weight": 600,
+          "line_height": 1.35,
+          "tracking": "-0.01em",
+          "role": "Section title"
+        },
+        "heading_3": {
+          "size": "15px",
+          "weight": 600,
+          "line_height": 1.35,
+          "tracking": "0",
+          "role": "Panel title"
+        },
+        "body": {
+          "size": "14px",
+          "weight": 400,
+          "line_height": 1.45,
+          "tracking": "0",
+          "role": "Body"
+        },
+        "body_small": {
+          "size": "13px",
+          "weight": 400,
+          "line_height": 1.4,
+          "tracking": "0",
+          "role": "Table/body small"
+        },
+        "caption": {
+          "size": "12px",
+          "weight": 400,
+          "line_height": 1.35,
+          "tracking": "0.005em",
+          "role": "Metadata"
+        },
+        "overline": {
+          "size": "11px",
+          "weight": 600,
+          "line_height": 1.3,
+          "tracking": "0.06em",
+          "role": "Overline"
+        }
+      },
+      "font_families": {
+        "heading": "System sans-serif; screenshot resembles a neutral contemporary UI grotesk, exact face indeterminate",
+        "body": "System sans-serif, e.g. -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+        "mono": "ui-monospace, SFMono-Regular, Menlo, monospace for IDs, codes, and aligned numeric metadata only"
+      },
+      "font_style_notes": "Compact, neutral sans-serif with restrained weight changes. Avoid fashion-editorial display faces in operational data views. Tabular numerals are recommended for quantities, rates, and currency; monospaced numerals optional for codes."
+    },
+    "spacing": {
+      "base_unit": "4px",
+      "scale": [
+        "4px",
+        "8px",
+        "12px",
+        "16px",
+        "20px",
+        "24px",
+        "32px",
+        "40px",
+        "48px",
+        "64px"
+      ],
+      "content_density": "comfortable overall, compact inside tables and navigation",
+      "section_rhythm": "Use 24–32px within related groups, 40–64px between major dashboard areas; the reference leaves a large quiet gap between manifest table and analysis panels."
+    },
+    "layout": {
+      "grid_system": "12-column desktop grid with aligned content edges; wide canvas and two-column lower analysis area",
+      "max_content_width": "Fluid desktop width: approximately 1180–1440px; allow up to approximately 1520px for dense operational tables. Do not hard-cap the application at 1200px.",
+      "columns": "Fluid 12-column desktop grid; use up to approximately 1520px for dense tables. Lower comparison region uses a wider route panel and narrower cost summary.",
+      "gutter": "24px between major columns; 16–20px internal panel padding; 8–12px control gaps. Reduce gutters at narrower breakpoints while maintaining table readability.",
+      "breakpoints": {
+        "mobile": "<640px: compact header and navigation; local table scrolling; no page-level horizontal overflow",
+        "tablet": "640–1199px: compact layout; local declaration table scrolling is allowed",
+        "desktop": ">=1200px: fluid full-width work area; all declaration columns visible without horizontal scrolling",
+        "wide": "Allow content to grow for operational tables; do not introduce a narrow hard cap"
+      },
+      "alignment_tendency": "Strict grid alignment with fluid content width and broad calm whitespace; local asymmetry in route comparison and cost summary.",
+      "table": "Declaration table is width:100% and table-layout:fixed with explicit proportional columns at desktop. At viewports >=1200px set min-width:0 and show every column without horizontal scrolling. Only tablet/mobile may scroll locally.",
+      "table_columns": {
+        "品名": "19%",
+        "sku_hs": "11%",
+        "数量": "6%",
+        "单价_JPY": "10%",
+        "单件重量_kg": "10%",
+        "单件体积_m3": "10%",
+        "申报价值_JPY": "14%",
+        "申报价值_CNY": "15%",
+        "actions": "5%"
+      }
+    },
+    "shape": {
+      "border_radius": {
+        "small": "4px",
+        "medium": "8px",
+        "large": "12px",
+        "pill": "999px"
+      },
+      "border_usage": "Subtle 1px neutral borders define cards, table rows, and controls; avoid heavy outlines except a selected option may use darker 1px border.",
+      "divider_style": "1px solid #E6E6E3; table and summary separators are quiet and consistent"
+    },
+    "elevation": {
+      "shadow_style": "Nearly flat; soft, barely visible shadow only for floating/active controls where separation is needed",
+      "levels": {
+        "low": "0 1px 2px rgba(28,28,30,0.04)",
+        "medium": "0 3px 10px rgba(28,28,30,0.07)",
+        "high": "0 8px 24px rgba(28,28,30,0.10), reserved for modal/drawer overlays"
+      },
+      "depth_cues": "Surface tone and hairline borders do most separation work; do not stack multiple shadows."
+    },
+    "iconography": {
+      "style": "One coherent family of understated outline SVG symbols: neutral monochrome, consistent 24×24 viewBox, rounded joins/ends, approximately 1.5–1.75 optical stroke, 17px navigation and 16px operation size. No colored states or decorative containers.",
+      "stroke_weight": "1.5–1.75 optical stroke",
+      "size_scale": "17px navigation; 16px operation; optical correction allowed without changing family or viewBox",
+      "preferred_set": "Use the existing product icon set if established; otherwise choose a consistent outline set such as Lucide. Avoid branded/custom Maison Margiela marks."
+    },
+    "motion": {
+      "easing": "cubic-bezier(0.2, 0, 0, 1)",
+      "duration_scale": {
+        "micro": "100–140ms",
+        "normal": "160–220ms",
+        "macro": "240–320ms"
+      },
+      "entrance_pattern": "No prominent entrance animation observed; panels should appear without choreography, with optional short opacity transition for overlays.",
+      "exit_pattern": "Short opacity/position transition for dismissible overlays only.",
+      "philosophy": "Minimal functional; motion confirms state changes and preserves orientation, with reduced-motion support."
+    },
+    "components": {
+      "button_style": "Primary actions use #1C1C1E fill with white label/icon; hover #343436; pressed #0E0E0F. Secondary actions use a white surface, 1px #D6D6D2 outline, near-black label, and neutral #FAFAF9 hover / #F1F1EE pressed. Import is outlined and visually subordinate to Add Item. Buttons are 36–38px high with approximately 8px radius and accessible focus, disabled, and loading states.",
+      "input_style": "White surface, 1px #D2D2CE boundary, 6–8px radius, compact consistent control height, neutral #777873 focus border and rgba(28, 28, 30, 0.14) focus ring. Labels remain visible; semantic errors are reserved for actual errors.",
+      "card_style": "White flat panel with 1px #E6E6E3 outline, 10–12px radius, 16–20px padding; avoid excessive shadow.",
+      "navigation_pattern": "Responsive desktop left rail approximately 216–240px wide with #F3F3F0 fill. Brand-to-nav 28–32px; rows 40–42px; row gap 4–6px; horizontal padding 10–12px; icon-text gap 10px. Normal text #41423F and icon #676864; hover uses #EEEEEB with #1C1C1E/#4F504D; active uses #E7E7E4, #1C1C1E text, #4F504D icon, 5–6px radius. No rail, colored border, glow, or shadow.",
+      "modal_style": "Not shown; infer a simple white dialog with neutral border, 12px radius, restrained shadow, clear title/actions and no glass blur.",
+      "list_style": "Compact operational tables with explicit column sizing, 40–44px rows, sticky headers and a sticky first column when useful, explicit units, aligned values, and contained horizontal scrolling on narrow screens.",
+      "component_notes": "Toolbar is a compact white strip with a fine neutral separator. FX controls pair currency, editable tabular numerals, neutral refresh action, and independent status feedback. Route cards align amounts and fee rows; actual selection uses a darker neutral border and optional small near-black dot, distinct from the neutral Reference badge. Links use #3F403D and underline on hover. Cost breakdown is a labeled list with right-aligned values and a clear total.",
+      "declaration_overview": {
+        "layout": "One white overview card, 4 columns × 2 rows desktop and 2 columns mobile, 1px neutral border, 10–12px radius, optional 0 1px 3px rgba(28,28,30,.04) shadow",
+        "metrics": [
+          "item rows / piece count",
+          "goods value JPY",
+          "goods value CNY",
+          "total weight",
+          "total volume",
+          "duty",
+          "VAT",
+          "air landed cost"
+        ],
+        "hierarchy": "Keep weight and volume separate, duty and VAT separate. Give landed-cost total slightly stronger emphasis and keep current ratio below it. This is a Wesen-specific adaptation, not a screenshot observation."
+      },
+      "iconography": "One understated, coherent SVG family with neutral monochrome strokes, 24×24 viewBox, rounded joins/ends, approximately 1.5–1.75 optical stroke, 17px navigation icons, and 16px action icons. No colored icon states or decorative containers.",
+      "route_selection": "Default white with neutral thin border; hover #FCFCFB and #CACAC6 border; actual selection uses #777873 border and optionally a small near-black dot. Reference badge uses #F1F1EE with #555652. These states must remain visually distinct.",
+      "landed_tabs": "Muted grey default; near-black text on hover; selected near-black text with 2px near-black underline.",
+      "exchange_controls": "Refresh control has 30–32px desktop visual size, transparent or white default, neutral icon, #EEEEEB hover, #E3E3E0 pressed, and neutral dark focus ring. On touch layouts preserve an accessible hit area.",
+      "declaration_table": {
+        "desktop": "At >=1200px width:100%, table-layout:fixed, min-width:0; all columns visible at 1280px and 1440px without horizontal scrolling.",
+        "columns": {
+          "product": "19%",
+          "sku_hs": "11%",
+          "quantity": "6%",
+          "unit_price_jpy": "10%",
+          "unit_weight_kg": "10%",
+          "unit_volume_m3": "10%",
+          "declared_value_jpy": "14%",
+          "declared_value_cny": "15%",
+          "actions": "5%"
+        },
+        "header": "11.5–12px, 550–600 weight, 1.3 line-height, #666763, one line, aligned to the body column.",
+        "body": "13px, 1.35 line-height, #1C1C1E, vertically centered.",
+        "alignment": "Product name and SKU left aligned. All quantity, prices, weights, volumes, declared amounts and actions align consistently with their headers; numeric content is right aligned with tabular numerals.",
+        "row_height": "42–44px; header 38–40px; horizontal cell padding 8–10px.",
+        "inputs": "Same family and font as surrounding cells; compact padding, transparent resting border/background, #FAFAF9 hover, white focus with #AFAFAC border and neutral focus ring. Inputs width:100%, min-width:0; product names remain in their column."
+      }
+    }
+  },
+  "design_style": {
+    "aesthetic": {
+      "mood": [
+        "calm",
+        "precise",
+        "professional",
+        "understated"
+      ],
+      "visual_metaphor": "A quiet operations desk: clearly segmented work surfaces for shipment state, route choice, and landed-cost decisions.",
+      "era_influence": "Contemporary web application minimalism with a subtle premium/editorial restraint",
+      "genre": "Operational SaaS dashboard with understated premium finish",
+      "personality_traits": [
+        "methodical",
+        "confident",
+        "composed",
+        "approachable"
+      ],
+      "adjectives": [
+        "warm-neutral",
+        "legible",
+        "measured",
+        "orderly",
+        "low-drama"
+      ]
+    },
+    "visual_language": {
+      "complexity": "minimal",
+      "ornamentation": "None; hierarchy uses typographic weight, neutral surface contrast, spacing, and thin rules.",
+      "whitespace_usage": "Large calm whitespace around central task groups; tighter spacing within navigation, tables, and cost rows.",
+      "visual_weight_distribution": "Small left navigation rail, compact top toolbar, centered content; table is the first major information block, with route and cost panels below.",
+      "focal_strategy": "Distributed interest guided by strong task hierarchy: current shipment, route decision, total cost/action.",
+      "contrast_level": "Moderate, with high contrast reserved for primary text and actions",
+      "texture_usage": "No visible texture; flat matte surfaces"
+    },
+    "composition": {
+      "hierarchy_method": "Typographic hierarchy, spacing, hairline separators, near-black primary actions, and neutral interaction cues.",
+      "balance_type": "Asymmetric",
+      "flow_direction": "Top toolbar to manifest/table, then down to side-by-side route comparison and cost summary",
+      "grouping_strategy": "Thin borders and whitespace group related records; section headings sit outside and above their panels.",
+      "negative_space_role": "Separates workflow phases and protects scanability. Preserve broad whitespace around task groups while keeping table rows dense enough for operations."
+    },
+    "imagery": {
+      "photo_treatment": "No photography shown; product imagery is unnecessary for primary logistics workflows",
+      "illustration_style": "No illustration shown; use simple diagrams only when they clarify a route or shipment state",
+      "graphic_elements": "Outline utility icons, selected-route dot, simple status badges, rules and data tables",
+      "pattern_usage": "None observed",
+      "image_shape": "Not applicable; any shipment/product thumbnails should be optional, small, and subordinate"
+    },
+    "interaction_feel": {
+      "feedback_style": "Immediate and restrained; navigation and actual selected states use neutral grey surfaces and near-black text. Success, warning, and error colors appear only for actual semantic status.",
+      "hover_behavior": "Use subtle neutral surface changes and a clearly visible neutral dark focus indication; avoid lift, glow, or scale effects.",
+      "transition_personality": "Snappy and subtle",
+      "loading_style": "Not observable; use quiet skeleton rows or inline progress that preserves layout",
+      "microinteraction_density": "Low"
+    },
+    "brand_voice_in_ui": {
+      "tone": "Direct, composed, operational",
+      "formality": "Professional and plainspoken",
+      "cta_style": "Direct imperative with specific action labels",
+      "empty_state_approach": "Explain what data is missing and provide one next action; keep the same quiet surface style",
+      "error_tone": "Specific, calm, actionable, and tied to the affected calculation or shipment"
+    }
+  },
+  "visual_effects": {
+    "overview": {
+      "effect_intensity": "none",
+      "performance_tier": "lightweight",
+      "fallback_strategy": "No advanced effects required; standard controls remain fully usable with reduced motion and without animation.",
+      "primary_technology": "CSS only"
+    },
+    "background_effects": {
+      "type": "none",
+      "description": "Flat solid off-white/white surfaces; no gradient, noise, or animated background visible.",
+      "technology": "CSS solid colors",
+      "params": {
+        "color_palette": [
+          "#FFFFFF",
+          "#F3F3F0"
+        ],
+        "speed": "none",
+        "density": "none",
+        "opacity": "1",
+        "blend_mode": "normal"
+      }
+    },
+    "particle_systems": {
+      "enabled": null,
+      "type": "none",
+      "description": "No particle effects visible or needed.",
+      "technology": "none",
+      "params": {
+        "count": null,
+        "shape": "none",
+        "size_range": "none",
+        "movement_pattern": "none",
+        "color_behavior": "none",
+        "interaction": "none",
+        "spawn_area": "none"
+      }
+    },
+    "3d_elements": {
+      "enabled": null,
+      "type": "none",
+      "description": "No 3D elements visible or necessary.",
+      "technology": "none",
+      "params": {
+        "renderer": "none",
+        "lighting": "none",
+        "camera": "none",
+        "materials": "none",
+        "geometry": "none",
+        "post_processing": [],
+        "interaction_model": "none"
+      }
+    },
+    "shader_effects": {
+      "enabled": null,
+      "type": "none",
+      "description": "No shader or distortion effects observed.",
+      "technology": "none",
+      "params": {
+        "uniforms": "none",
+        "vertex_manipulation": "none",
+        "fragment_output": "none",
+        "noise_type": "none",
+        "distortion": "none"
+      }
+    },
+    "scroll_effects": {
+      "parallax": {
+        "enabled": null,
+        "layers": null,
+        "depth_range": "none",
+        "speed_curve": "none"
+      },
+      "scroll_triggered_animations": {
+        "enabled": null,
+        "trigger_points": "none",
+        "animation_type": "none",
+        "scrub_behavior": "none"
+      },
+      "scroll_morphing": {
+        "enabled": null,
+        "description": "No scroll-linked morphing visible or indicated."
+      }
+    },
+    "text_effects": {
+      "type": "none",
+      "description": "Static crisp typography; no animated, gradient, or distorted text.",
+      "technology": "none",
+      "params": {
+        "split_strategy": "none",
+        "animation_per_unit": "none",
+        "stagger": "none",
+        "effect_style": "none"
+      }
+    },
+    "cursor_effects": {
+      "enabled": null,
+      "type": "none",
+      "description": "Use standard platform cursor and accessible focus states.",
+      "params": {
+        "shape": "default",
+        "size": "default",
+        "blend_mode": "none",
+        "trail": null,
+        "interaction_zone": "none"
+      }
+    },
+    "image_effects": {
+      "type": "none",
+      "description": "No image treatments or hover transforms are shown.",
+      "technology": "none",
+      "params": {
+        "filter_pipeline": "none",
+        "hover_transform": "none",
+        "reveal_animation": "none",
+        "distortion_type": "none"
+      }
+    },
+    "glassmorphism_neumorphism": {
+      "enabled": null,
+      "style": "none",
+      "params": {
+        "blur_radius": "0",
+        "transparency": "0",
+        "border_treatment": "none",
+        "shadow_type": "none",
+        "light_source_angle": "none"
+      }
+    },
+    "canvas_drawings": {
+      "enabled": null,
+      "type": "none",
+      "description": "No canvas-rendered content; use ordinary charts/maps only if logistics tasks require them.",
+      "technology": "none",
+      "params": {
+        "draw_method": "none",
+        "animation_loop": "none",
+        "color_scheme": "neutral surfaces with locally applied neutral interaction cues",
+        "responsiveness": "not applicable",
+        "interaction": "none"
+      }
+    },
+    "svg_animations": {
+      "enabled": null,
+      "type": "none",
+      "description": "No animated SVG effects visible; utility icons may be static SVGs.",
+      "params": {
+        "animation_method": "none",
+        "path_morphing": null,
+        "stroke_animation": null,
+        "filter_effects": "none"
+      }
+    },
+    "composite_notes": "Use flat white and warm greige surfaces, fine borders, restrained radii, near-black primary actions, and neutral grey interaction states only. No blur, glass, gradients, decorative motion, or 3D is needed."
+  },
+  "anti_patterns": [
+    "No gradient backgrounds.",
+    "No glassmorphism or frosted/translucent panels.",
+    "No oversized dashboard cards.",
+    "No excessive pill shapes; reserve pills for compact status indicators when useful.",
+    "No card-inside-card layouts.",
+    "No oversized SaaS headings or landing-page display typography.",
+    "No decorative charts without an operational decision purpose.",
+    "No broad neutral brand wash.",
+    "No heavy shadows.",
+    "No excessive animation or motion that competes with data.",
+    "No colorful multi-card KPI system.",
+    "No green success color for an ordinary successful exchange-rate refresh.",
+    "No decorative accent color in ordinary UI states.",
+    "Do not reproduce bright-blue boxes or red handwritten numbers from reference screenshots; they are user annotations, not interface elements."
+  ],
+  "reference_observed": {
+    "source": "Supplied dashboard screenshot. The screenshot includes handwritten and boxed user annotations in the supplied capture; those annotations are not interface design and must not be reproduced. Reference observations are descriptive only and do not override Wesen-specific selected interaction rules.",
+    "observed": [
+      "Warm greige left sidebar beside white work surfaces.",
+      "Near-black typography and filled black primary actions.",
+      "Compact horizontal toolbar with a subtle bottom separator.",
+      "Thin 1px-like neutral panel and row separators; restrained corner rounding.",
+      "Compact table with aligned numeric and currency values.",
+      "Broad whitespace between table and lower analysis panels.",
+      "Route comparison beside a cost breakdown.",
+      "A small number of high-contrast inline action links are visible; Wesen renders routine links in neutral dark grey.",
+      "Flat low-noise surfaces with little visible elevation."
+    ],
+    "not_observable": [
+      "Exact source CSS dimensions, font family, and exact token values.",
+      "Hover, focus, transition, loading, and responsive behaviors from the static screenshot."
+    ],
+    "color_measurement": {
+      "status": "not_completed",
+      "reason": "The named reference image is absent at design/references/variant-dashboard.png, and the available deterministic script cannot run because its sharp dependency is not installed.",
+      "palette_status": "The neutral palette values in this refinement are explicitly user-selected, not screenshot measurements. Earlier screenshot palette observations remain approximate and unverified."
+    },
+    "dimension_confidence": "Proportions and component measurements in the earlier profile are estimates from the displayed screenshot, not recovered source specifications."
+  },
+  "wesen_adaptations": {
+    "classification": "Wesen-specific requirements and implementation rules selected for this logistics and landed-cost application; not claims about the reference screenshot.",
+    "rules": [
+      "Use Wesen identity, established terminology, workflows, and permissions.",
+      "Use fluid desktop content width approximately 1180–1440px; extend to approximately 1520px for dense operational tables.",
+      "Treat desktop sidebar width as responsive in the range approximately 216–240px.",
+      "Prioritize shipment, route, carrier, customs, currency, fee, and calculation data relevant to actual Wesen workflows.",
+      "Use compact readable tables with aligned numeric values and explicit currency/unit context.",
+      "Show cost components and assumptions clearly and make landed-cost totals easy to locate.",
+      "Keep route comparison + cost breakdown composition while adapting its content to real decision criteria.",
+      "Preserve accessibility, responsive behavior, and reduced-motion preferences.",
+      "Use the explicitly user-selected near-black and neutral tokens in this revision; use neutral locally for selection, links, hover, focus, information, and lightweight interaction only, with no broad color wash."
+    ]
+  },
+  "wesen_adaptation_rules": {
+    "preserve": [
+      "Warm greige sidebar (#F3F3F0), white work surfaces, near-black typography and primary actions, neutral grey controls, fluid operational layout, subtle 1px separators, restrained radius, compact tables, broad calm whitespace, route comparison and landed-cost composition.",
+      "Keep the UI flat and low-noise: no gradients, glass, heavy shadows, colored KPI cards, decorative charts, or decorative accent colors.",
+      "Use neutral-only routine interactions: selected navigation #E7E7E4; hover #EEEEEB; near-black selected tabs; white outlined secondary buttons; neutral focus treatment."
+    ],
+    "adapt": [
+      "Use the exact user-selected neutral palette and responsive layout values. These values are not screenshot measurements.",
+      "Fit the full declaration table at desktop 1280px and 1440px using explicit proportional widths; allow contained local horizontal scrolling only below 1200px.",
+      "Use one coherent neutral monochrome 24×24 SVG icon family: approximately 17px navigation, 16px operation icons, rounded 1.5–1.75 optical strokes, no emoji or Unicode icon substitutes.",
+      "Keep one overview card with eight distinct metrics in a 4×2 desktop grid; landed total may use stronger type weight, never color.",
+      "Show import/add actions only on declaration. Use white outlined Import and near-black primary Add Item.",
+      "Use neutral route hover/selection and near-black landed-route tab underline; keep Reference badge distinct from selected state.",
+      "Preserve the established Chinese, Japanese, and English experience, accessibility, responsive behavior, calculations, and business logic."
+    ],
+    "avoid": [
+      "Do not reproduce annotation marks from screenshots. No decorative accent color in ordinary UI states.",
+      "No gradients, glass, heavy shadows, colored KPI cards, decorative charts, broad color wash, or excessive animation."
+    ]
+  }
+}
