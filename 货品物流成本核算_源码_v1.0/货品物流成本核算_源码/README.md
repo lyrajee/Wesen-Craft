@@ -36,13 +36,15 @@
 
 ## P2 实时物流追踪
 
-追踪记录保存在所属货批中，每批可添加多条海运或空运记录。海运按船名/IMO/MMSI 查询 AIS 船位，空运按航班号查询航班状态与位置；空运服务查询的是航班信息，不是 AWB 货物扫描记录。供应商无法返回的数据会保持为空，不会推测清关或签收状态。批次状态只显示建议，需用户确认后才会更新。
+追踪记录保存在所属货批中，每批可添加多条海运或空运记录。海运通过 AISStream.io WebSocket 按 MMSI 查询近期 AIS 船位；空运通过 adsb.fi 公共 ADS-B 数据按 ICAO24 地址或明确输入的 ADS-B 呼号查询飞机位置。航班号、呼号和 ICAO24 地址是独立字段；航班号不会被当作呼号查询。空运数据不包含 AWB 货物扫描、起讫地或 ETA，缺失数据保持为空，手工输入的路线和时间会保留。飞机落地或运输到达不会自动表示货物已清关或签收。
 
-在 Vercel 的项目环境变量中按需配置以下服务端密钥。密钥仅由 `/api/tracking/sea` 和 `/api/tracking/air` 使用，不要放入 `index.html` 或前端配置：
+在 Vercel 的项目环境变量中仅需为海运配置服务端密钥：
 
-- `MARINETRAFFIC_API_KEY`：MarineTraffic Vessel Positions API 访问密钥。
-- `AIRNAV_API_KEY`：AirNav Radar API Bearer token。
+- `AISSTREAM_API_KEY`：在 [AISStream.io](https://aisstream.io/) 获取。密钥仅在服务端 `/api/tracking/sea` 使用，不能放入浏览器代码。
 
-缺少密钥、供应商限流或无匹配结果时，追踪页会保留最近一次成功数据并显示状态。服务端函数实例内有短期缓存（海运 3 分钟、空运 1 分钟）；这不是跨实例共享缓存。船舶位置、航班状态、预计到达时间和轨迹覆盖范围取决于相应供应商账户权限及数据可用性。地图使用 OpenStreetMap 瓦片并保留署名。
+空运查询不需要密钥。adsb.fi 公共 API 仅供个人非商业用途，公开端点限速约为每秒 1 次；请遵守 [adsb.fi 数据使用说明](https://github.com/adsbfi/opendata/blob/main/README.md)，页面会标注数据来源。海运查询仅在进入追踪页或手动刷新时执行，空运页面可见时约每 60 秒刷新，页面隐藏或记录完成后停止轮询。Vercel 实例内有短期缓存，不是跨实例共享缓存。AIS/ADS-B 覆盖取决于接收站、目标应答和供应商数据可用性。
+
+地图使用 OpenStreetMap 瓦片并显示署名。路线总览只用实线连接起点与当前位置、虚线连接当前位置与目的地；没有实际历史轨迹时，不绘制或暗示历史航迹。
 
 本地回归检查：在源码目录运行 `node tests/phase0.test.mjs`、`node tests/phase1-a.test.mjs`、`node tests/phase1-b.test.mjs`、`node tests/phase1-c.test.mjs`、`node tests/phase1-d.test.mjs` 和 `node tests/phase2.test.mjs`。
+
