@@ -1,113 +1,194 @@
-const cache = new Map();
-const SEA_TTL = 3 * 60 * 1000;
-const AIR_TTL = 60 * 1000;
+const AISSTREAM_URL='wss://stream.aisstream.io/v0/stream';
+const AIS_EAST_ASIA_BOUNDS=[[[45,120],[20,150]]];
+const SEA_CACHE_MS=150000;
+const AIR_CACHE_MS=45000;
+const cache=new Map();
+let lastAdsbRequestAt=0;
 
 class TrackingProviderError extends Error {
-  constructor(code, status = 502) { super(code); this.code = code; this.status = status; }
+  constructor(code,status=502){super(code);this.code=code;this.status=status;}
+}
+function text(value){return value==null?'':String(value).trim();}
+function numberOrNull(value){if(value===''||value==null||value==='ground')return null;const number=Number(value);return Number.isFinite(number)?number:null;}
+function validMmsi(value){return /^\d{9}$/.test(text(value));}
+function validIcao24(value){return /^[0-9a-f]{6}$/i.test(text(value));}
+function parseMessage(data){try{return JSON.parse(Buffer.isBuffer(data)?data.toString('utf8'):String(data));}catch{return null;}}
+function adsbLastSeen(nowValue,seenSeconds,fallback){
+  const now=numberOrNull(nowValue),seen=numberOrNull(seenSeconds);
+  if(now==null||seen==null)return fallback;
+  const timestampMs=(now>1e12?now:now*1000)-seen*1000,date=new Date(timestampMs);
+  return Number.isNaN(date.getTime())?fallback:date.toISOString();
+}
+function matchingMmsi(message,mmsi){
+  const meta=message&&message.MetaData||{},body=message&&message.Message||{};
+  const supplied=meta.MMSI||body.PositionReport&&body.PositionReport.UserID||body.ShipStaticData&&body.ShipStaticData.UserID;
+  return text(supplied)===mmsi;
 }
 
-function isValidImo(value) {
-  const imo = String(value || '').replace(/\s/g, '');
-  if (!/^\d{7}$/.test(imo)) return false;
-  const sum = imo.slice(0, 6).split('').reduce((total, digit, index) => total + Number(digit) * (7 - index), 0);
-  return sum % 10 === Number(imo[6]);
-}
-function isValidMmsi(value) { return /^\d{9}$/.test(String(value || '').replace(/\s/g, '')); }
-function normalizeIdentifier(value) { return String(value || '').trim(); }
-function numberOrNull(value) { if (value === '' || value == null) return null; const number = Number(value); return Number.isFinite(number) ? number : null; }
-function coordinate(lat, lng) { const latitude=numberOrNull(lat),longitude=numberOrNull(lng);return latitude!=null&&longitude!=null&&Math.abs(latitude)<=90&&Math.abs(longitude)<=180?{lat:latitude,lng:longitude}:null; }
-function parseTimestamp(value) { const date=value?new Date(value):null;return date&&!Number.isNaN(date.getTime())?date.toISOString():null; }
-
-async function requestJson(url, options, fetchImpl) {
-  let response;
-  try { response=await fetchImpl(url,{...options,signal:AbortSignal.timeout(9000)}); }
-  catch(error) { if(error?.name==='TimeoutError'||error?.name==='AbortError')throw new TrackingProviderError('PROVIDER_TIMEOUT',504);throw new TrackingProviderError('PROVIDER_UNAVAILABLE',502); }
-  if(response.status===401)throw new TrackingProviderError('PROVIDER_UNAUTHORIZED',502);
-  if(response.status===403)throw new TrackingProviderError('PROVIDER_PERMISSION_UNAVAILABLE',502);
-  if(response.status===404)throw new TrackingProviderError('TRACKING_NO_RESULT',404);
-  if(response.status===429)throw new TrackingProviderError('PROVIDER_QUOTA_EXCEEDED',429);
-  if(response.status>=500)throw new TrackingProviderError('PROVIDER_UNAVAILABLE',502);
-  if(!response.ok)throw new TrackingProviderError('PROVIDER_REQUEST_FAILED',502);
-  try{return await response.json();}catch{throw new TrackingProviderError('PROVIDER_INVALID_RESPONSE',502);}
-}
-
-function createSeaTrackingProvider({env=process.env,fetchImpl=fetch}={}) {
-  const apiKey=String(env.MARINETRAFFIC_API_KEY||'').trim();
-  const unavailable=()=>{if(!apiKey)throw new TrackingProviderError('MARINETRAFFIC_API_KEY_MISSING',503);};
+function createSeaTrackingProvider({env=process.env,WebSocketImpl,timeoutMs=25000,now=()=>new Date()}={}){
   return {
-    async search(identifiers={}) {
-      unavailable();
-      const imo=normalizeIdentifier(identifiers.imo),mmsi=normalizeIdentifier(identifiers.mmsi);
-      if(imo&&!isValidImo(imo))throw new TrackingProviderError('TRACKING_INVALID_IMO',400);
-      if(mmsi&&!isValidMmsi(mmsi))throw new TrackingProviderError('TRACKING_INVALID_MMSI',400);
-      if(!imo&&!mmsi)throw new TrackingProviderError('TRACKING_IDENTIFIER_REQUIRES_IMO_OR_MMSI',400);
-      const url=new URL(`https://services.marinetraffic.com/api/exportvessel/${encodeURIComponent(apiKey)}`);
-      url.searchParams.set('v','6');url.searchParams.set('protocol','jsono');url.searchParams.set('timespan','1440');
-      url.searchParams.set(imo?'imo':'mmsi',imo||mmsi);
-      const payload=await requestJson(url,{headers:{accept:'application/json'}},fetchImpl);
-      const record=Array.isArray(payload)?payload[0]:Array.isArray(payload?.DATA)?payload.DATA[0]:payload?.DATA||payload?.data?.[0]||null;
-      if(!record)throw new TrackingProviderError('TRACKING_NO_RESULT',404);
-      return record;
-    },
-    getStatus(record) { return {vesselStatus:String(record.STATUS??''),destination:textField(record.DESTINATION),navigationStatus:String(record.STATUS??''),vesselOnly:true}; },
-    getPosition(record) { const point=coordinate(record.LAT,record.LON);return point?{...point,speed:numberOrNull(record.SPEED),course:numberOrNull(record.COURSE),timestamp:parseTimestamp(record.TIMESTAMP),source:'MarineTraffic'}:null; },
-    getSchedule(record) { return {eta:parseTimestamp(record.ETA_CALC||record.ETA),etaSource:'MarineTraffic',etaUpdatedAt:parseTimestamp(record.ETA_UPDATED||record.TIMESTAMP),lastPort:textField(record.LAST_PORT),destinationPort:textField(record.NEXT_PORT_NAME||record.DESTINATION)}; },
-    getEvents(record) { return Array.isArray(record.events)?record.events:[]; }
-  };
-}
-
-function textField(value) { return value == null ? '' : String(value).trim(); }
-
-function createAirTrackingProvider({env=process.env,fetchImpl=fetch}={}) {
-  const apiKey=String(env.AIRNAV_API_KEY||'').trim();
-  const unavailable=()=>{if(!apiKey)throw new TrackingProviderError('AIRNAV_API_KEY_MISSING',503);};
-  return {
-    async search(identifiers={}) {
-      unavailable();
-      const flightNo=normalizeIdentifier(identifiers.flightNo).toUpperCase().replace(/\s+/g,'');
-      if(!/^[A-Z0-9]{2,3}\d{1,4}[A-Z]?$/.test(flightNo))throw new TrackingProviderError('TRACKING_INVALID_FLIGHT',400);
-      const payload=await requestJson('https://api.airnavradar.com/v2/flights/live',{method:'POST',headers:{authorization:`Bearer ${apiKey}`,'content-type':'application/json',accept:'application/json'},body:JSON.stringify({flightIds:[flightNo],incLastKnownPos:true})},fetchImpl);
-      if(payload?.success===false)throw new TrackingProviderError('PROVIDER_REQUEST_FAILED',502);
-      const flights=Array.isArray(payload?.flights)?payload.flights:[];
-      let record=flights.find(flight=>[flight.flightNumberIata,flight.flightNumberIcao,flight.callsign].some(value=>String(value||'').replace(/\s+/g,'').toUpperCase()===flightNo))||flights[0];
-      if(!record){
-        const url=new URL('https://api.airnavradar.com/v2/flights/schedules');url.searchParams.set('flightId',flightNo);
-        if(identifiers.flightDate){const start=new Date(`${identifiers.flightDate}T00:00:00Z`),end=new Date(start.getTime()+86400000);if(!Number.isNaN(start.getTime())){url.searchParams.set('departureFromDate',start.toISOString());url.searchParams.set('departureToDate',end.toISOString());}}
-        const schedules=await requestJson(url,{headers:{authorization:`Bearer ${apiKey}`,accept:'application/json'}},fetchImpl);
-        record=(Array.isArray(schedules?.flights)?schedules.flights:[]).find(flight=>[flight.flightNumberIata,flight.flightNumberIcao,flight.callsign].some(value=>String(value||'').replace(/\s+/g,'').toUpperCase()===flightNo))||schedules?.flights?.[0]||null;
-      }
-      if(!record)throw new TrackingProviderError('TRACKING_NO_RESULT',404);
-      return record;
-    },
-    getStatus(record) { return {flightStatus:textField(record.status||record.arrivalStatus||record.departureStatus),delayMinutes:Math.max(0,Math.round((new Date(record.estimatedDeparture||record.actualDeparture||0)-new Date(record.scheduledDeparture||0))/60000)||0)}; },
-    getPosition(record) { const point=coordinate(record.latitude,record.longitude);return point?{...point,speed:numberOrNull(record.groundSpeed),course:numberOrNull(record.heading),altitude:numberOrNull(record.altitude),timestamp:parseTimestamp(record.updated||record.created||record.positions?.at(-1)?.timestamp),source:'AirNav Radar'}:null; },
-    getSchedule(record) {
-      const departure=coordinate(record.depAirportLatitude,record.depAirportLongitude),arrival=coordinate(record.arrAirportLatitude,record.arrAirportLongitude);
-      return {scheduledDeparture:parseTimestamp(record.scheduledDeparture),actualDeparture:parseTimestamp(record.actualDeparture||record.actualTakeoff),eta:parseTimestamp(record.estimatedArrival||record.scheduledArrival),etaSource:'AirNav Radar',etaUpdatedAt:parseTimestamp(record.updated),estimatedArrival:parseTimestamp(record.estimatedArrival),actualArrival:parseTimestamp(record.actualArrival||record.actualLanding),flightStatus:textField(record.status||record.arrivalStatus||record.departureStatus),delayMinutes:this.getStatus(record).delayMinutes,departureAirport:{name:textField(record.depAirportName),code:textField(record.depAirportIata||record.depAirportIcao),...departure},arrivalAirport:{name:textField(record.arrAirportName),code:textField(record.arrAirportIata||record.arrAirportIcao),...arrival}};
-    },
-    getEvents(record) {
-      const schedule=this.getSchedule(record),events=[];
-      if(schedule.scheduledDeparture)events.push({status:'Scheduled',description:'Scheduled departure',timestamp:schedule.scheduledDeparture,location:schedule.departureAirport.code});
-      if(schedule.actualDeparture)events.push({status:'Departed',description:'Actual departure',timestamp:schedule.actualDeparture,location:schedule.departureAirport.code});
-      if(schedule.actualArrival)events.push({status:'Arrived',description:'Actual arrival',timestamp:schedule.actualArrival,location:schedule.arrivalAirport.code});
-      const status=schedule.flightStatus.toUpperCase();if(status.includes('CANCEL'))events.push({status:'Cancelled',description:'Flight cancelled',timestamp:record.updated||new Date().toISOString()});else if(status.includes('DELAY'))events.push({status:'Delayed',description:'Flight delayed',timestamp:record.updated||new Date().toISOString()});
-      return events;
+    async search(identifiers={}){
+      const apiKey=text(env.AISSTREAM_API_KEY);
+      if(!apiKey)throw new TrackingProviderError('AISSTREAM_API_KEY_MISSING',503);
+      const mmsi=text(identifiers.mmsi);
+      if(!validMmsi(mmsi))throw new TrackingProviderError(mmsi?'TRACKING_INVALID_MMSI':'TRACKING_IDENTIFIER_REQUIRES_MMSI',400);
+      const Socket=WebSocketImpl||require('ws');
+      return new Promise((resolve,reject)=>{
+        let socket,settled=false,subscriptionSent=false,subscribed=false,staticName='';
+        const timer=setTimeout(()=>{
+          if(subscribed)finish(new TrackingProviderError('AIS_POSITION_NOT_AVAILABLE',404));
+          else if(subscriptionSent)finish(new TrackingProviderError('PROVIDER_SUBSCRIPTION_TIMEOUT',504));
+          else finish(new TrackingProviderError('PROVIDER_TIMEOUT',504));
+        },timeoutMs);
+        const finish=(error,value)=>{
+          if(settled)return;
+          settled=true;clearTimeout(timer);
+          try{if(socket&&(socket.readyState===0||socket.readyState===1))socket.close();}catch{}
+          if(error)reject(error);else resolve(value);
+        };
+        try{
+          socket=new Socket(AISSTREAM_URL,{perMessageDeflate:true,handshakeTimeout:Math.min(3000,timeoutMs)});
+          socket.on('open',()=>{
+            try{
+              socket.send(JSON.stringify({
+                APIKey:apiKey,
+                BoundingBoxes:AIS_EAST_ASIA_BOUNDS,
+                FiltersShipMMSI:[mmsi],
+                FilterMessageTypes:['PositionReport','ShipStaticData']
+              }));
+              subscriptionSent=true;
+            }catch{finish(new TrackingProviderError('PROVIDER_UNAVAILABLE',502));}
+          });
+          socket.on('message',raw=>{
+            const envelope=parseMessage(raw);
+            if(!envelope)return;
+            if(envelope.MessageType==='SubscriptionConfirmation'){
+              subscribed=true;
+              return;
+            }
+            const providerMessage=text(envelope.Error||envelope.Message?.Error||envelope.Message?.error||envelope.error||(typeof envelope.Message==='string'?envelope.Message:''));
+            if(envelope.MessageType==='Error'||providerMessage){
+              const unauthorized=/api.?key|unauthori[sz]ed|authentication|credential|401/i.test(providerMessage);
+              finish(new TrackingProviderError(unauthorized?'PROVIDER_UNAUTHORIZED':'PROVIDER_SUBSCRIPTION_REJECTED',unauthorized?401:502));
+              return;
+            }
+            if(!subscribed||!matchingMmsi(envelope,mmsi))return;
+            const meta=envelope.MetaData||{},body=envelope.Message||{};
+            if(envelope.MessageType==='ShipStaticData'){
+              const data=body.ShipStaticData||{};
+              staticName=text(meta.ShipName||data.Name||staticName);
+              return;
+            }
+            if(envelope.MessageType!=='PositionReport')return;
+            const data=body.PositionReport||{},lat=numberOrNull(meta.Latitude==null?data.Latitude:meta.Latitude),lng=numberOrNull(meta.Longitude==null?data.Longitude:meta.Longitude);
+            if(lat==null||lng==null||Math.abs(lat)>90||Math.abs(lng)>180)return;
+            const fetchedAt=now().toISOString(),timestamp=text(meta.time_utc||meta.TimeUTC)||fetchedAt;
+            const shipName=text(meta.ShipName||staticName);
+            const position={
+              lat,lng,speed:numberOrNull(data.Sog),course:numberOrNull(data.Cog),heading:numberOrNull(data.TrueHeading),
+              navigationStatus:numberOrNull(data.NavigationalStatus),timestamp,lastSeen:timestamp,source:'AISStream.io',mmsi,shipName
+            };
+            finish(null,{
+              provider:'AISStream.io',fetchedAt,
+              status:{navigationStatus:position.navigationStatus},
+              position,
+              identifiers:{mmsi,vesselName:shipName},
+              schedule:{},events:[]
+            });
+          });
+          socket.on('error',error=>{
+            const timeout=/timeout/i.test(text(error&&error.message));
+            finish(new TrackingProviderError(timeout?'PROVIDER_TIMEOUT':'PROVIDER_UNAVAILABLE',timeout?504:502));
+          });
+          socket.on('close',(code)=>{
+            if(!subscribed){
+              const rejected=code===1000||code===1008;
+              finish(new TrackingProviderError(code===1008?'PROVIDER_UNAUTHORIZED':rejected?'PROVIDER_SUBSCRIPTION_REJECTED':'PROVIDER_UNAVAILABLE',code===1008?401:rejected?502:502));
+              return;
+            }
+            finish(new TrackingProviderError(code===1000?'AIS_POSITION_NOT_AVAILABLE':'PROVIDER_UNAVAILABLE',code===1000?404:502));
+          });
+        }catch(error){
+          clearTimeout(timer);
+          reject(error instanceof TrackingProviderError?error:new TrackingProviderError('PROVIDER_UNAVAILABLE',502));
+        }
+      });
     }
   };
 }
 
-function cacheKey(mode, identifiers) { return `${mode}:${Object.keys(identifiers||{}).sort().map(key=>`${key}=${normalizeIdentifier(identifiers[key])}`).join('&')}`; }
-async function fetchTrackingSnapshot(mode, identifiers, options={}) {
-  const key=cacheKey(mode,identifiers),now=Date.now(),ttl=mode==='air'?AIR_TTL:SEA_TTL,cached=cache.get(key);
-  if(cached&&cached.expiresAt>now)return {...cached.value,cached:true};
-  const provider=mode==='air'?createAirTrackingProvider(options):createSeaTrackingProvider(options);
-  const record=await provider.search(identifiers);
-  const status=provider.getStatus(record),position=provider.getPosition(record),schedule=provider.getSchedule(record);
-  const events=provider.getEvents(record).map(event=>({...event,provider:mode==='air'?'AirNav Radar':'MarineTraffic',source:'provider',confirmed:true}));
-  const value={provider:mode==='air'?'AirNav Radar':'MarineTraffic',fetchedAt:new Date().toISOString(),status,position,schedule,events,identifiers:mode==='sea'?{imo:textField(record.IMO),mmsi:textField(record.MMSI),vesselName:textField(record.SHIPNAME)}:{flightNo:textField(record.flightNumberIata||record.flightNumberIcao||record.callsign),airline:textField(record.airlineName),aircraft:textField(record.aircraftType)}};
-  cache.set(key,{value,expiresAt:now+ttl});
-  if(cache.size>500){for(const [cacheKeyValue,item] of cache){if(item.expiresAt<=now)cache.delete(cacheKeyValue);if(cache.size<=400)break;}}
-  return {...value,cached:false};
+function createAirTrackingProvider({fetchImpl=fetch,now=()=>new Date(),minRequestIntervalMs=1000,clock=()=>Date.now()}={}){
+  return {
+    async search(identifiers={}){
+      const icao24=text(identifiers.icao24).toLowerCase(),callsign=text(identifiers.callsign).toUpperCase().replace(/\s+/g,'');
+      let path='';
+      if(icao24){
+        if(!validIcao24(icao24))throw new TrackingProviderError('TRACKING_INVALID_ICAO24',400);
+        path='v2/icao/'+encodeURIComponent(icao24);
+      }else if(callsign){
+        path='v2/callsign/'+encodeURIComponent(callsign);
+      }else{
+        throw new TrackingProviderError('TRACKING_IDENTIFIER_REQUIRED',400);
+      }
+      const requestStartedAt=clock();
+      if(minRequestIntervalMs>0&&requestStartedAt-lastAdsbRequestAt<minRequestIntervalMs)throw new TrackingProviderError('PROVIDER_RATE_LIMITED',429);
+      lastAdsbRequestAt=requestStartedAt;
+      let response;
+      try{response=await fetchImpl('https://opendata.adsb.fi/api/'+path,{headers:{accept:'application/json'}});}
+      catch{throw new TrackingProviderError('PROVIDER_UNAVAILABLE',502);}
+      if(response.status===429)throw new TrackingProviderError('PROVIDER_RATE_LIMITED',429);
+      if(response.status===404)throw new TrackingProviderError('AIRCRAFT_NOT_FOUND',404);
+      if(response.status>=500)throw new TrackingProviderError('PROVIDER_UNAVAILABLE',502);
+      if(!response.ok)throw new TrackingProviderError('PROVIDER_REQUEST_FAILED',502);
+      let payload;
+      try{payload=await response.json();}catch{throw new TrackingProviderError('PROVIDER_INVALID_RESPONSE',502);}
+      const aircraft=Array.isArray(payload)?payload:Array.isArray(payload&&payload.ac)?payload.ac:Array.isArray(payload&&payload.aircraft)?payload.aircraft:payload&&payload.hex?[payload]:[];
+      const record=aircraft.find(item=>{
+        const hex=text(item.hex||item.icao24).toLowerCase(),flight=text(item.flight||item.callsign).toUpperCase().replace(/\s+/g,'');
+        return icao24?hex===icao24:flight===callsign;
+      });
+      if(!record)throw new TrackingProviderError('AIRCRAFT_NOT_FOUND',404);
+      const fetchedAt=now().toISOString(),seen=numberOrNull(record.seen_pos==null?record.seen:record.seen_pos);
+      return {record,fetchedAt,lastSeen:adsbLastSeen(payload&&payload.now,seen,fetchedAt)};
+    },
+    async fetch(identifiers={}){
+      const result=await this.search(identifiers),record=result.record,lat=numberOrNull(record.lat),lng=numberOrNull(record.lon);
+      const icao24=text(record.hex||record.icao24).toLowerCase(),callsign=text(record.flight||record.callsign).trim(),registration=text(record.r||record.registration);
+      const position=lat!=null&&lng!=null&&Math.abs(lat)<=90&&Math.abs(lng)<=180?{
+        lat,lng,altitude:numberOrNull(record.alt_baro==null?record.alt_geom:record.alt_baro),
+        speed:numberOrNull(record.gs),course:numberOrNull(record.track),heading:numberOrNull(record.track),
+        verticalRate:numberOrNull(record.baro_rate==null?record.geom_rate:record.baro_rate),
+        timestamp:result.lastSeen,lastSeen:result.lastSeen,source:'adsb.fi',icao24,callsign,registration
+      }:null;
+      const landed=record.on_ground===true||record.alt_baro==='ground';
+      return {
+        provider:'adsb.fi',fetchedAt:result.fetchedAt,
+        status:{flightStatus:landed?'landed':text(record.flight_status),landed,completed:landed},
+        position,
+        identifiers:{
+          flightNo:text(identifiers.flightNo),callsign,icao24,registration
+        },
+        schedule:{},
+        events:landed?[{normalizedType:'arrived',originalType:'landed',description:'Aircraft landed',timestamp:result.lastSeen,provider:'adsb.fi',source:'provider',confirmed:true}]:[]
+      };
+    }
+  };
 }
 
-module.exports={TrackingProviderError,createSeaTrackingProvider,createAirTrackingProvider,fetchTrackingSnapshot,isValidImo,isValidMmsi};
+function cacheKey(mode,identifiers){
+  const fields=mode==='sea'?['mmsi']:['icao24','callsign'];
+  return mode+':'+fields.map(key=>key+'='+text(identifiers&&identifiers[key]).toLowerCase()).join('&');
+}
+async function fetchTrackingSnapshot(mode,identifiers,options={}){
+  const key=cacheKey(mode,identifiers),now=Date.now(),ttl=mode==='air'?AIR_CACHE_MS:SEA_CACHE_MS,cached=cache.get(key);
+  if(cached&&cached.expiresAt>now)return {...cached.value,cached:true};
+  const provider=mode==='air'?createAirTrackingProvider(options):createSeaTrackingProvider(options);
+  const value=mode==='air'?await provider.fetch(identifiers):await provider.search(identifiers);
+  cache.set(key,{value,expiresAt:now+ttl});
+  if(cache.size>500){for(const [entry,item] of cache){if(item.expiresAt<=now)cache.delete(entry);if(cache.size<=400)break;}}
+  return {...value,cached:false};
+}
+function clearTrackingCache(){cache.clear();lastAdsbRequestAt=0;}
+
+module.exports={TrackingProviderError,createSeaTrackingProvider,createAirTrackingProvider,fetchTrackingSnapshot,clearTrackingCache,validMmsi,validIcao24};
+
