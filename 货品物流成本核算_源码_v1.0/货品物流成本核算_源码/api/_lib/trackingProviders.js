@@ -25,7 +25,7 @@ function matchingMmsi(message,mmsi){
   return text(supplied)===mmsi;
 }
 
-function createSeaTrackingProvider({env=process.env,WebSocketImpl,timeoutMs=8500,now=()=>new Date()}={}){
+function createSeaTrackingProvider({env=process.env,WebSocketImpl,timeoutMs=25000,now=()=>new Date()}={}){
   return {
     async search(identifiers={}){
       const apiKey=text(env.AISSTREAM_API_KEY);
@@ -34,9 +34,11 @@ function createSeaTrackingProvider({env=process.env,WebSocketImpl,timeoutMs=8500
       if(!validMmsi(mmsi))throw new TrackingProviderError(mmsi?'TRACKING_INVALID_MMSI':'TRACKING_IDENTIFIER_REQUIRES_MMSI',400);
       const Socket=WebSocketImpl||require('ws');
       return new Promise((resolve,reject)=>{
-        let socket,settled=false,subscribed=false,staticName='';
+        let socket,settled=false,subscriptionSent=false,subscribed=false,staticName='';
         const timer=setTimeout(()=>{
-          finish(new TrackingProviderError(subscribed?'AIS_POSITION_NOT_AVAILABLE':'PROVIDER_TIMEOUT',subscribed?404:504));
+          if(subscribed)finish(new TrackingProviderError('AIS_POSITION_NOT_AVAILABLE',404));
+          else if(subscriptionSent)finish(new TrackingProviderError('PROVIDER_SUBSCRIPTION_TIMEOUT',504));
+          else finish(new TrackingProviderError('PROVIDER_TIMEOUT',504));
         },timeoutMs);
         const finish=(error,value)=>{
           if(settled)return;
@@ -54,12 +56,23 @@ function createSeaTrackingProvider({env=process.env,WebSocketImpl,timeoutMs=8500
                 FiltersShipMMSI:[mmsi],
                 FilterMessageTypes:['PositionReport','ShipStaticData']
               }));
-              subscribed=true;
+              subscriptionSent=true;
             }catch{finish(new TrackingProviderError('PROVIDER_UNAVAILABLE',502));}
           });
           socket.on('message',raw=>{
             const envelope=parseMessage(raw);
-            if(!envelope||!matchingMmsi(envelope,mmsi))return;
+            if(!envelope)return;
+            if(envelope.MessageType==='SubscriptionConfirmation'){
+              subscribed=true;
+              return;
+            }
+            const providerMessage=text(envelope.Error||envelope.Message?.Error||envelope.Message?.error||envelope.error||(typeof envelope.Message==='string'?envelope.Message:''));
+            if(envelope.MessageType==='Error'||providerMessage){
+              const unauthorized=/api.?key|unauthori[sz]ed|authentication|credential|401/i.test(providerMessage);
+              finish(new TrackingProviderError(unauthorized?'PROVIDER_UNAUTHORIZED':'PROVIDER_SUBSCRIPTION_REJECTED',unauthorized?401:502));
+              return;
+            }
+            if(!subscribed||!matchingMmsi(envelope,mmsi))return;
             const meta=envelope.MetaData||{},body=envelope.Message||{};
             if(envelope.MessageType==='ShipStaticData'){
               const data=body.ShipStaticData||{};
@@ -88,6 +101,11 @@ function createSeaTrackingProvider({env=process.env,WebSocketImpl,timeoutMs=8500
             finish(new TrackingProviderError(timeout?'PROVIDER_TIMEOUT':'PROVIDER_UNAVAILABLE',timeout?504:502));
           });
           socket.on('close',(code)=>{
+            if(!subscribed){
+              const rejected=code===1000||code===1008;
+              finish(new TrackingProviderError(code===1008?'PROVIDER_UNAUTHORIZED':rejected?'PROVIDER_SUBSCRIPTION_REJECTED':'PROVIDER_UNAVAILABLE',code===1008?401:rejected?502:502));
+              return;
+            }
             finish(new TrackingProviderError(code===1000?'AIS_POSITION_NOT_AVAILABLE':'PROVIDER_UNAVAILABLE',code===1000?404:502));
           });
         }catch(error){

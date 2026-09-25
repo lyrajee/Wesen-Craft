@@ -2,12 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
 import {BATCH_SCHEMA_VERSION,createBatch,duplicateBatch} from '../src/models/batch.mjs';
-import {createTrackingEvent,createShipmentTracking,detectTrackingAlerts,getSuggestedBatchStatus} from '../src/models/tracking.mjs';
+import {createTrackingEvent,createShipmentTracking,applyPositionSnapshot,detectTrackingAlerts,getSuggestedBatchStatus} from '../src/models/tracking.mjs';
 import {createBatchRepository,createMemoryStorage,migrateStoredData} from '../src/repositories/batchRepository.mjs';
 import {createTrackingRepository} from '../src/repositories/trackingRepository.mjs';
 import {createAirTrackingProvider,createSeaTrackingProvider,fetchTrackingSnapshot,clearTrackingCache,validMmsi,validIcao24} from '../api/_lib/trackingProviders.js';
 import seaHandler from '../api/tracking/sea.js';
 import {buildRouteSegments} from '../src/ui/trackingMap.mjs';
+import {resolveTrackingLocation} from '../src/models/trackingLocations.mjs';
+import {addFormState,buildTrackingIdentifierFields,trackingLookupError} from '../src/ui/trackingPanel.mjs';
+import providerStatusHandler,{createProviderStatusHandler} from '../api/tracking/status.js';
 
 const jsonResponse=(payload,status=200)=>({ok:status>=200&&status<300,status,json:async()=>payload});
 const validMmsiValue='538003913';
@@ -46,6 +49,7 @@ test('AISStream subscribes server-side by MMSI and normalizes AIS position witho
   clearTrackingCache();
   class UsefulSocket extends AisSocket{
     send(value){super.send(value);setImmediate(()=>{
+      this.emit('message',encoded({MessageType:'SubscriptionConfirmation',Message:{}}));
       this.emit('message',encoded({MessageType:'ShipStaticData',MetaData:{MMSI:Number(validMmsiValue)},Message:{ShipStaticData:{UserID:Number(validMmsiValue),Name:'SUNNY STAR'}}}));
       this.emit('message',encoded(makePositionEnvelope()));
     });}
@@ -66,11 +70,21 @@ test('AISStream subscribes server-side by MMSI and normalizes AIS position witho
   assert.equal(socket.closed,true);
 });
 
-test('AISStream returns an explicit no-recent-position state when no position event arrives',async()=>{
-  class QuietSocket extends AisSocket{send(value){super.send(value);}}
+test('AISStream returns an explicit no-recent-position state after subscription confirmation',async()=>{
+  class QuietSocket extends AisSocket{send(value){super.send(value);setImmediate(()=>this.emit('message',encoded({MessageType:'SubscriptionConfirmation',Message:{}})));}}
   const provider=createSeaTrackingProvider({env:{AISSTREAM_API_KEY:'server-secret'},WebSocketImpl:QuietSocket,timeoutMs:20});
   await assert.rejects(()=>provider.search({mmsi:validMmsiValue}),error=>error.code==='AIS_POSITION_NOT_AVAILABLE');
   assert.equal(QuietSocket.last.closed,true);
+});
+
+test('AISStream distinguishes unconfirmed subscription timeout, rejection, and invalid key',async()=>{
+  class UnconfirmedSocket extends AisSocket{send(value){super.send(value);}}
+  const timeout=createSeaTrackingProvider({env:{AISSTREAM_API_KEY:'secret'},WebSocketImpl:UnconfirmedSocket,timeoutMs:15});
+  await assert.rejects(()=>timeout.search({mmsi:validMmsiValue}),error=>error.code==='PROVIDER_SUBSCRIPTION_TIMEOUT');
+  class RejectedSocket extends AisSocket{send(value){super.send(value);setImmediate(()=>this.emit('message',encoded({MessageType:'Error',Error:'Invalid subscription'})));}}
+  await assert.rejects(()=>createSeaTrackingProvider({env:{AISSTREAM_API_KEY:'secret'},WebSocketImpl:RejectedSocket}).search({mmsi:validMmsiValue}),error=>error.code==='PROVIDER_SUBSCRIPTION_REJECTED');
+  class UnauthorizedSocket extends AisSocket{send(value){super.send(value);setImmediate(()=>this.emit('message',encoded({MessageType:'Error',Error:'Invalid API key'})));}}
+  await assert.rejects(()=>createSeaTrackingProvider({env:{AISSTREAM_API_KEY:'bad'},WebSocketImpl:UnauthorizedSocket}).search({mmsi:validMmsiValue}),error=>error.code==='PROVIDER_UNAUTHORIZED');
 });
 
 test('AISStream distinguishes a websocket handshake timeout from a disconnect',async()=>{
@@ -173,5 +187,51 @@ test('map draws origin to position solid and position to destination dashed, wit
   ]);
   assert.deepEqual(buildRouteSegments({origin,position:null,destination}),[]);
   assert.deepEqual(buildRouteSegments({origin:null,position,destination:null}),[]);
+  assert.deepEqual(buildRouteSegments({origin:{lat:null,lng:null},position:{lat:null,lng:null},destination:null}),[]);
+  assert.deepEqual(buildRouteSegments({origin,position:{lat:100,lng:200},destination}),[]);
+  assert.deepEqual(buildRouteSegments({origin,position,destination:null}),[{kind:'solid',points:[[31.2,121.4],[32,123]]}]);
+  assert.deepEqual(buildRouteSegments({origin:null,position,destination}),[{kind:'dashed',points:[[32,123],[35.6,139.7]]}]);
+});
+
+test('tracking form keeps the selected mode when Add toggles the form and exposes only that mode identifiers',()=>{
+  const renderField=(name)=>`<input name="${name}">`;
+  let sea=addFormState('sea',false);assert.deepEqual(sea,{mode:'sea',open:true});
+  const seaForm=buildTrackingIdentifierFields(sea.mode,renderField);
+  assert.match(seaForm,/name="mmsi"/);assert.match(seaForm,/name="containerNo"/);assert.doesNotMatch(seaForm,/name="flightNo"|name="callsign"|name="icao24"/);
+  let air=addFormState('air',false);assert.deepEqual(air,{mode:'air',open:true});
+  const airForm=buildTrackingIdentifierFields(air.mode,renderField);
+  assert.match(airForm,/name="flightNo"/);assert.match(airForm,/name="callsign"/);assert.match(airForm,/name="icao24"/);assert.doesNotMatch(airForm,/name="mmsi"/);
+});
+
+test('live lookup preflight requires valid MMSI or Callsign/ICAO24, never flight number',()=>{
+  assert.equal(trackingLookupError('sea',{}),'TRACKING_IDENTIFIER_REQUIRES_MMSI');
+  assert.equal(trackingLookupError('sea',{mmsi:'123'}),'TRACKING_INVALID_MMSI');
+  assert.equal(trackingLookupError('sea',{mmsi:validMmsiValue}),'');
+  assert.equal(trackingLookupError('air',{flightNo:'NH967'}),'TRACKING_IDENTIFIER_REQUIRED');
+  assert.equal(trackingLookupError('air',{callsign:'ANA967'}),'');
+  assert.equal(trackingLookupError('air',{icao24:'abc123'}),'');
+  assert.equal(trackingLookupError('air',{icao24:'nope'}),'TRACKING_INVALID_ICAO24');
+});
+
+test('provider status endpoint returns only configured state and rejects other methods',async()=>{
+  const invoke=async(handler,method)=>{let status=0,payload=null;const res={setHeader:()=>res,status:value=>{status=value;return res},json:value=>{payload=value;return res}};await handler({method},res);return {status,payload};};
+  assert.deepEqual(await invoke(createProviderStatusHandler({AISSTREAM_API_KEY:'server-only'}),'GET'),{status:200,payload:{configured:true}});
+  assert.deepEqual(await invoke(createProviderStatusHandler({AISSTREAM_API_KEY:''}),'GET'),{status:200,payload:{configured:false}});
+  assert.deepEqual(await invoke(providerStatusHandler,'POST'),{status:405,payload:{error:'METHOD_NOT_ALLOWED'}});
+});
+
+test('last known position and successful timestamp survive a refresh without a new AIS position',()=>{
+  const lastKnown={lat:35.1,lng:129.04,timestamp:'2026-09-24T00:00:00.000Z',source:'AISStream.io'};
+  const tracking=createShipmentTracking({mode:'sea',position:lastKnown,lastSuccessfulUpdate:'2026-09-24T00:00:00.000Z',trackingStatus:'live'});
+  applyPositionSnapshot(tracking,null,'2026-09-25T04:00:00.000Z');
+  assert.equal(tracking.position.lat,lastKnown.lat);assert.equal(tracking.position.lng,lastKnown.lng);assert.equal(tracking.position.timestamp,lastKnown.timestamp);assert.equal(tracking.lastSuccessfulUpdate,'2026-09-24T00:00:00.000Z');assert.equal(tracking.lastProviderUpdate,'2026-09-25T04:00:00.000Z');assert.equal(tracking.trackingStatus,'stale');
+  applyPositionSnapshot(tracking,{lat:null,lng:null},'2026-09-25T04:30:00.000Z');
+  assert.equal(tracking.position.lat,lastKnown.lat);assert.equal(tracking.lastSuccessfulUpdate,'2026-09-24T00:00:00.000Z');
+});
+
+test('known route names resolve to real port and airport locations while unknown names stay unresolved',()=>{
+  assert.deepEqual(resolveTrackingLocation('Kobe','port')?.lat,34.681);assert.equal(resolveTrackingLocation('上海','port')?.lng,121.49);
+  assert.equal(resolveTrackingLocation('NRT','airport')?.lat,35.772);assert.equal(resolveTrackingLocation('PVG','airport')?.lng,121.808);
+  assert.equal(resolveTrackingLocation('user entered terminal','port'),null);assert.equal(resolveTrackingLocation('KIX','port'),null);
 });
 

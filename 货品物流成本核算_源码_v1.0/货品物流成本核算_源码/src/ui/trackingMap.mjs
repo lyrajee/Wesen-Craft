@@ -1,3 +1,4 @@
+import {resolveTrackingLocation} from '../models/trackingLocations.mjs';
 let leafletPromise;
 function loadLeaflet(){
   if(globalThis.L)return Promise.resolve(globalThis.L);
@@ -7,7 +8,7 @@ function loadLeaflet(){
   });
   return leafletPromise;
 }
-const validPoint=point=>point&&Number.isFinite(Number(point.lat))&&Number.isFinite(Number(point.lng));
+const validPoint=point=>point&&point.lat!=null&&point.lat!==''&&point.lng!=null&&point.lng!==''&&Number.isFinite(Number(point.lat))&&Number.isFinite(Number(point.lng))&&Math.abs(Number(point.lat))<=90&&Math.abs(Number(point.lng))<=180;
 export function buildRouteSegments({origin,position,destination}={}){
   if(!validPoint(position))return [];
   const segments=[];
@@ -16,10 +17,15 @@ export function buildRouteSegments({origin,position,destination}={}){
   return segments;
 }
 export async function renderTrackingMap(container,tracking,tx){
-  const position=tracking.position,origin=tracking.origin,destination=tracking.destination,points=[];
+  const position=tracking.position,legs=tracking.routeLegs||[],firstLeg=legs.slice().sort((a,b)=>a.sequence-b.sequence)[0],lastLeg=legs.slice().sort((a,b)=>b.sequence-a.sequence)[0];
+  const locationKind=tracking.mode==='air'?'airport':'port';
+  const origin=resolveTrackingLocation(tracking.origin,locationKind)||resolveTrackingLocation(firstLeg?.origin,locationKind);
+  const destination=resolveTrackingLocation(tracking.destination,locationKind)||resolveTrackingLocation(lastLeg?.destination,locationKind);
+  const points=[];
   const add=(label,point,type)=>{if(validPoint(point))points.push({label,lat:Number(point.lat),lng:Number(point.lng),type});};
   add(tx('trackingOrigin'),origin,'endpoint');
-  (tracking.routeLegs||[]).forEach(leg=>{if(!validPoint(origin))add(leg.origin.name||tx('trackingOrigin'),leg.origin,'endpoint');if(!validPoint(destination))add(leg.destination.name||tx('trackingDestination'),leg.destination,'endpoint');});
+  if(!validPoint(origin))for(const leg of legs)add(leg.origin.name||tx('trackingOrigin'),resolveTrackingLocation(leg.origin,locationKind),'endpoint');
+  if(!validPoint(destination))for(const leg of legs)add(leg.destination.name||tx('trackingDestination'),resolveTrackingLocation(leg.destination,locationKind),'endpoint');
   add(tx('trackingDestination'),destination,'endpoint');
   add(tx('trackingCurrentPosition'),position,'current');
   const sources=tracking.mode==='sea'?tx('trackingMapSourceSea'):tx('trackingMapSourceAir');

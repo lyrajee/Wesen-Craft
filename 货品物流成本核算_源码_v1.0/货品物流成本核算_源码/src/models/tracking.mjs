@@ -54,6 +54,20 @@ export function createShipmentTracking(input = {}, now = isoNow()) {
   };
 }
 
+export function applyPositionSnapshot(tracking, position, fetchedAt, completed = false) {
+  const lat=Number(position?.lat),lng=Number(position?.lng);
+  const validPosition=position&&position.lat!=null&&position.lat!==''&&position.lng!=null&&position.lng!==''&&Number.isFinite(lat)&&Number.isFinite(lng)&&Math.abs(lat)<=90&&Math.abs(lng)<=180;
+  if(validPosition){
+    tracking.position={...position,lat,lng};
+    tracking.lastSuccessfulUpdate=fetchedAt||new Date().toISOString();
+    tracking.trackingStatus=completed?'completed':'live';
+  }else{
+    tracking.trackingStatus=completed?'completed':tracking.position?.lat!=null&&tracking.position?.lng!=null?'stale':'no_result';
+  }
+  if(fetchedAt)tracking.lastProviderUpdate=fetchedAt;
+  return tracking;
+}
+
 const eventRules = [
   [/booking confirmed|booking|booked|订舱|予約/i,'booking_confirmed'],[/empty pickup|empty container|提空箱/i,'empty_pickup'],
   [/gate.?in|terminal received|进港|入场/i,'gate_in'],[/loaded on|loaded|装船/i,'loaded'],

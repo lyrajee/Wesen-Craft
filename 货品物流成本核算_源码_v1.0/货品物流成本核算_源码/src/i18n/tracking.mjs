@@ -10,3 +10,29 @@ export const trackingDictionary={
   }
 };
 
+Object.assign(trackingDictionary.zh,{
+  trackingMmsi:'MMSI *',trackingIdentifierNeeded:'实时 AIS 船位需要 MMSI。集装箱号、B/L 和 IMO 仍可用于记录，但当前免费数据源无法用这些字段直接查询船位。',
+  trackingProviderConfigured:'AISStream.io 已配置。填写 MMSI 后可查询船位。',trackingProviderChecking:'正在检查 AISStream.io 配置…',trackingWaitingForPosition:'已连接 AISStream，等待船舶发送新的位置报告。',
+  trackingPositionTimestamp:'位置时间',trackingLookupIdentifier:'查询识别号',trackingRefreshState:'刷新状态',trackingLastKnownPosition:'最后已知 AIS 位置',
+  trackingMmsiLiveHint:'用于实时船位查询；其他海运字段可作为记录保存。',trackingFlightNoHint:'仅用于航班记录，不用于 ADS-B 实时查询。',trackingCallsignHint:'用于实时 ADS-B 查询。',trackingIcao24Hint:'如果已知，优先使用 ICAO24。',
+  trackingAirFlightOnly:'实时 ADS-B 查询需要 Callsign 或 ICAO24。航班号 {flightNo} 本身不能直接用于 ADS-B 查询。',
+  trackingSubscriptionTimeout:'AISStream 未确认订阅，请稍后重试。',trackingSubscriptionRejected:'AISStream 拒绝了订阅请求，请检查 MMSI 和服务配置。'
+});
+Object.assign(trackingDictionary.ja,{
+  trackingMmsi:'MMSI *',trackingIdentifierNeeded:'リアルタイム AIS 船位の照会には MMSI が必要です。コンテナ番号、B/L、IMO は記録に使えますが、現在の無料データソースではこれらの項目だけで船位を照会できません。',
+  trackingProviderConfigured:'AISStream.io は設定済みです。MMSI を入力すると船位を照会できます。',trackingProviderChecking:'AISStream.io の設定を確認しています…',trackingWaitingForPosition:'AISStream に接続しました。船舶から新しい位置レポートが届くのを待っています。',
+  trackingPositionTimestamp:'位置時刻',trackingLookupIdentifier:'照会識別子',trackingRefreshState:'更新状態',trackingLastKnownPosition:'最後に確認された AIS 位置',
+  trackingMmsiLiveHint:'リアルタイム船位の照会に使用します。他の海運項目は記録として保存できます。',trackingFlightNoHint:'便の記録専用で、ADS-B のリアルタイム照会には使いません。',trackingCallsignHint:'リアルタイム ADS-B 照会に使用します。',trackingIcao24Hint:'わかる場合は ICAO24 を優先してください。',
+  trackingAirFlightOnly:'リアルタイム ADS-B 照会には Callsign または ICAO24 が必要です。便名 {flightNo} だけでは照会できません。',
+  trackingSubscriptionTimeout:'AISStream が購読を確認しませんでした。しばらくしてから再試行してください。',trackingSubscriptionRejected:'AISStream が購読を拒否しました。MMSI とサービス設定を確認してください。'
+});
+Object.assign(trackingDictionary.en,{
+  trackingMmsi:'MMSI *',trackingIdentifierNeeded:'A live AIS position requires an MMSI. Container number, B/L, and IMO can still be saved as reference fields, but the current free data source cannot query positions from those fields alone.',
+  trackingProviderConfigured:'AISStream.io is configured. Enter an MMSI to look up a vessel position.',trackingProviderChecking:'Checking AISStream.io configuration…',trackingWaitingForPosition:'Connected to AISStream; waiting for the vessel to send a new position report.',
+  trackingPositionTimestamp:'Position timestamp',trackingLookupIdentifier:'Lookup identifier',trackingRefreshState:'Refresh state',trackingLastKnownPosition:'Last known AIS position',
+  trackingMmsiLiveHint:'Used for live vessel lookup; other sea fields remain available as saved references.',trackingFlightNoHint:'For the flight record only; not used for live ADS-B lookup.',trackingCallsignHint:'Used for live ADS-B lookup.',trackingIcao24Hint:'Prefer ICAO24 when known.',
+  trackingAirFlightOnly:'Live ADS-B lookup requires a Callsign or ICAO24. Flight number {flightNo} cannot be queried directly.',
+  trackingSubscriptionTimeout:'AISStream did not confirm the subscription. Try again shortly.',trackingSubscriptionRejected:'AISStream rejected the subscription. Check the MMSI and provider configuration.'
+});
+
+

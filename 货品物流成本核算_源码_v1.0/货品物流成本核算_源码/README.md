@@ -42,6 +42,8 @@
 
 - `AISSTREAM_API_KEY`：在 [AISStream.io](https://aisstream.io/) 获取。密钥仅在服务端 `/api/tracking/sea` 使用，不能放入浏览器代码。
 
+部署在 Vercel 时，请将 `AISSTREAM_API_KEY` 同时配置到 **Preview** 和 **Production** 环境；P2 功能分支生成的是 Preview 部署。`/api/tracking/status` 只返回 `configured: true/false`，不会返回密钥。
+
 空运查询不需要密钥。adsb.fi 公共 API 仅供个人非商业用途，公开端点限速约为每秒 1 次；请遵守 [adsb.fi 数据使用说明](https://github.com/adsbfi/opendata/blob/main/README.md)，页面会标注数据来源。海运查询仅在进入追踪页或手动刷新时执行，空运页面可见时约每 60 秒刷新，页面隐藏或记录完成后停止轮询。Vercel 实例内有短期缓存，不是跨实例共享缓存。AIS/ADS-B 覆盖取决于接收站、目标应答和供应商数据可用性。
 
 地图使用 OpenStreetMap 瓦片并显示署名。路线总览只用实线连接起点与当前位置、虚线连接当前位置与目的地；没有实际历史轨迹时，不绘制或暗示历史航迹。
