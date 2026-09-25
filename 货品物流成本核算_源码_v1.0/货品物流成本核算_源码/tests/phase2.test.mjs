@@ -87,8 +87,8 @@ test('AISStream distinguishes a websocket handshake timeout from a disconnect',a
 
 test('adsb.fi queries by callsign only when explicitly supplied and normalizes aircraft fields',async()=>{
   clearTrackingCache();
-  const urls=[],nowSeconds=Math.floor(fixedNow.getTime()/1000);
-  const provider=createAirTrackingProvider({minRequestIntervalMs:0,fetchImpl:async url=>{urls.push(String(url));return jsonResponse({now:nowSeconds,ac:[{hex:'abc123',flight:'ANA967 ',r:'JA123A',lat:35.5,lon:139.7,alt_baro:32000,gs:450,track:82,baro_rate:-700,seen_pos:8,on_ground:false}]});},now:()=>fixedNow});
+  const urls=[],nowMilliseconds=fixedNow.getTime();
+  const provider=createAirTrackingProvider({minRequestIntervalMs:0,fetchImpl:async url=>{urls.push(String(url));return jsonResponse({now:nowMilliseconds,ac:[{hex:'abc123',flight:'ANA967 ',r:'JA123A',lat:35.5,lon:139.7,alt_baro:32000,gs:450,track:82,baro_rate:-700,seen_pos:8,on_ground:false}]});},now:()=>fixedNow});
   const result=await provider.fetch({flightNo:'NH967',callsign:'ANA967'});
   assert.equal(validIcao24(result.identifiers.icao24),true);
   assert.equal(urls[0],'https://opendata.adsb.fi/api/v2/callsign/ANA967');
