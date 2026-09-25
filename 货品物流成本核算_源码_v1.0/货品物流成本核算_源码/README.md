@@ -44,9 +44,8 @@
 
 部署在 Vercel 时，请将 `AISSTREAM_API_KEY` 同时配置到 **Preview** 和 **Production** 环境；P2 功能分支生成的是 Preview 部署。`/api/tracking/status` 只返回 `configured: true/false`，不会返回密钥。
 
-空运查询不需要密钥。adsb.fi 公共 API 仅供个人非商业用途，公开端点限速约为每秒 1 次；请遵守 [adsb.fi 数据使用说明](https://github.com/adsbfi/opendata/blob/main/README.md)，页面会标注数据来源。海运查询仅在进入追踪页或手动刷新时执行，空运页面可见时约每 60 秒刷新，页面隐藏或记录完成后停止轮询。Vercel 实例内有短期缓存，不是跨实例共享缓存。AIS/ADS-B 覆盖取决于接收站、目标应答和供应商数据可用性。
+空运查询不需要密钥。adsb.fi 公共 API 仅供个人非商业用途，公开端点限速约为每秒 1 次；请遵守 [adsb.fi 数据使用说明](https://github.com/adsbfi/opendata/blob/main/README.md)，页面会标注数据来源。adsb.fi 只返回 ADS-B 网络当前可见的飞机；未查到广播不代表飞机不存在。AISStream 是实时 AIS 事件流，不保证打开网页后立刻产生新的船位报告；已确认订阅但等待窗口内没有报告会作为 `no_new_position` 成功响应。页面将保留最后已知坐标，并清楚标注其位置时间，不会显示成实时位置。海运查询仅在进入追踪页或手动刷新时执行，空运页面可见时约每 60 秒刷新，页面隐藏或记录完成后停止轮询。Vercel 实例内有短期缓存，不是跨实例共享缓存。AIS/ADS-B 覆盖取决于接收站、目标应答和供应商数据可用性。
 
 地图使用 OpenStreetMap 瓦片并显示署名。路线总览只用实线连接起点与当前位置、虚线连接当前位置与目的地；没有实际历史轨迹时，不绘制或暗示历史航迹。
 
 本地回归检查：在源码目录运行 `node tests/phase0.test.mjs`、`node tests/phase1-a.test.mjs`、`node tests/phase1-b.test.mjs`、`node tests/phase1-c.test.mjs`、`node tests/phase1-d.test.mjs` 和 `node tests/phase2.test.mjs`。
-

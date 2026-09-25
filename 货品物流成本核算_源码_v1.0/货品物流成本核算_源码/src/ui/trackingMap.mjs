@@ -17,6 +17,7 @@ export function buildRouteSegments({origin,position,destination}={}){
   return segments;
 }
 export async function renderTrackingMap(container,tracking,tx){
+  const renderVersion=(container._wesenMapVersion||0)+1;container._wesenMapVersion=renderVersion;
   const position=tracking.position,legs=tracking.routeLegs||[],firstLeg=legs.slice().sort((a,b)=>a.sequence-b.sequence)[0],lastLeg=legs.slice().sort((a,b)=>b.sequence-a.sequence)[0];
   const locationKind=tracking.mode==='air'?'airport':'port';
   const origin=resolveTrackingLocation(tracking.origin,locationKind)||resolveTrackingLocation(firstLeg?.origin,locationKind);
@@ -27,20 +28,24 @@ export async function renderTrackingMap(container,tracking,tx){
   if(!validPoint(origin))for(const leg of legs)add(leg.origin.name||tx('trackingOrigin'),resolveTrackingLocation(leg.origin,locationKind),'endpoint');
   if(!validPoint(destination))for(const leg of legs)add(leg.destination.name||tx('trackingDestination'),resolveTrackingLocation(leg.destination,locationKind),'endpoint');
   add(tx('trackingDestination'),destination,'endpoint');
-  add(tx('trackingCurrentPosition'),position,'current');
+  const hasPosition=validPoint(position),lastKnown=hasPosition&&tracking.trackingStatus!=='live';
+  const rawPositionTime=position.timestamp||position.lastSeen||tracking.lastSuccessfulUpdate||'';
+  const parsedPositionTime=rawPositionTime?new Date(rawPositionTime):null;
+  const formattedPositionTime=parsedPositionTime&&!Number.isNaN(parsedPositionTime.getTime())?parsedPositionTime.toLocaleString():rawPositionTime||'—';
+  const positionLabel=lastKnown?`${tx('trackingLastKnownPosition')} · ${formattedPositionTime}`:tx('trackingCurrentPosition');
+  add(positionLabel,position,lastKnown?'last-known':'current');
   const sources=tracking.mode==='sea'?tx('trackingMapSourceSea'):tx('trackingMapSourceAir');
   const attribution=tx('trackingMapCredit');
   if(!points.length){container.innerHTML=`<div class="tracking-map-empty"><strong>${tx('trackingNoPosition')}</strong><span>${tx('trackingMapWaiting')}</span><small>${sources} · ${attribution}</small></div>`;return;}
   container.innerHTML='<div class="tracking-map-canvas" role="img" aria-label="'+tx('trackingMapLabel')+'"></div><div class="tracking-map-source">'+sources+' · '+attribution+'</div>';
   try{
-    const L=await loadLeaflet();if(!container.isConnected)return;
+    const L=await loadLeaflet();if(!container.isConnected||container._wesenMapVersion!==renderVersion)return;
     const element=container.querySelector('.tracking-map-canvas');const map=L.map(element,{zoomControl:true,scrollWheelZoom:false,attributionControl:true,keyboard:true});
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'}).addTo(map);
-    const markers=points.map(point=>L.circleMarker([point.lat,point.lng],{radius:point.type==='current'?7:5,color:'#1c1c1e',weight:2,fillColor:'#fff',fillOpacity:1}).bindTooltip(point.label).addTo(map));
+    const markers=points.map(point=>L.circleMarker([point.lat,point.lng],{radius:point.type==='endpoint'?5:7,color:point.type==='last-known'?'#777':'#1c1c1e',weight:2,fillColor:'#fff',fillOpacity:1}).bindTooltip(point.label).addTo(map));
     const segments=buildRouteSegments({origin,position,destination});
     for(const segment of segments)L.polyline(segment.points,{color:'#686966',weight:2,opacity:.8,dashArray:segment.kind==='dashed'?'5 6':null}).addTo(map);
     map.fitBounds(L.latLngBounds(points.map(point=>[point.lat,point.lng])),{padding:[24,24],maxZoom:6});
     container._wesenMap=map;
-  }catch{container.innerHTML=`<div class="tracking-map-empty"><strong>${tx('trackingMapUnavailable')}</strong><span>${tx('trackingMapWaiting')}</span><small>${sources} · ${attribution}</small></div>`;}
+  }catch{if(container._wesenMapVersion===renderVersion)container.innerHTML=`<div class="tracking-map-empty"><strong>${tx('trackingMapUnavailable')}</strong><span>${tx('trackingMapWaiting')}</span><small>${sources} · ${attribution}</small></div>`;}
 }
-
