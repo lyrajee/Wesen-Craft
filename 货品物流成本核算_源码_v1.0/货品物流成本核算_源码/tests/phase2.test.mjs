@@ -5,8 +5,9 @@ import {BATCH_SCHEMA_VERSION,createBatch,duplicateBatch} from '../src/models/bat
 import {createTrackingEvent,createShipmentTracking,applyPositionSnapshot,detectTrackingAlerts,getSuggestedBatchStatus} from '../src/models/tracking.mjs';
 import {createBatchRepository,createMemoryStorage,migrateStoredData} from '../src/repositories/batchRepository.mjs';
 import {createTrackingRepository} from '../src/repositories/trackingRepository.mjs';
-import {createAirTrackingProvider,createSeaTrackingProvider,fetchTrackingSnapshot,clearTrackingCache,validMmsi,validIcao24} from '../api/_lib/trackingProviders.js';
+import {createAirTrackingProvider,createSeaTrackingProvider,fetchTrackingSnapshot,clearTrackingCache,validMmsi,validIcao24,validCallsign} from '../api/_lib/trackingProviders.js';
 import seaHandler from '../api/tracking/sea.js';
+import {createTrackingHandler} from '../api/_lib/trackingHandler.js';
 import {buildRouteSegments} from '../src/ui/trackingMap.mjs';
 import {resolveTrackingLocation} from '../src/models/trackingLocations.mjs';
 import {addFormState,buildTrackingIdentifierFields,trackingLookupError} from '../src/ui/trackingPanel.mjs';
@@ -35,6 +36,7 @@ test('sea endpoint rejects other methods and returns missing AIS credentials saf
   const invoke=async(method,body)=>{let status=0,payload=null,headers={};const res={setHeader:(key,value)=>{headers[key]=value;return res},status:value=>{status=value;return res},json:value=>{payload=value;return res}};await seaHandler({method,body},res);return {status,payload,headers}};
   const method=await invoke('GET',{});assert.equal(method.status,405);assert.equal(method.payload.error,'METHOD_NOT_ALLOWED');
   const missing=await invoke('POST',{identifiers:{mmsi:validMmsiValue}});assert.equal(missing.status,503);assert.equal(missing.payload.error,'AISSTREAM_API_KEY_MISSING');assert.equal(missing.headers['Cache-Control'],'private, no-store');
+  const invalid=await invoke('POST',{identifiers:{mmsi:'123'}});assert.equal(invalid.status,400);assert.equal(invalid.payload.error,'TRACKING_INVALID_MMSI');
 });
 
 test('AISStream validates MMSI and rejects invalid identifiers before opening a socket',async()=>{
@@ -70,10 +72,11 @@ test('AISStream subscribes server-side by MMSI and normalizes AIS position witho
   assert.equal(socket.closed,true);
 });
 
-test('AISStream returns an explicit no-recent-position state after subscription confirmation',async()=>{
+test('AISStream returns a successful no-new-position state after subscription confirmation',async()=>{
   class QuietSocket extends AisSocket{send(value){super.send(value);setImmediate(()=>this.emit('message',encoded({MessageType:'SubscriptionConfirmation',Message:{}})));}}
   const provider=createSeaTrackingProvider({env:{AISSTREAM_API_KEY:'server-secret'},WebSocketImpl:QuietSocket,timeoutMs:20});
-  await assert.rejects(()=>provider.search({mmsi:validMmsiValue}),error=>error.code==='AIS_POSITION_NOT_AVAILABLE');
+  const result=await provider.search({mmsi:validMmsiValue});
+  assert.equal(result.ok,true);assert.equal(result.state,'no_new_position');assert.equal(result.position,null);assert.equal(result.provider,'AISStream.io');
   assert.equal(QuietSocket.last.closed,true);
 });
 
@@ -123,13 +126,31 @@ test('adsb.fi prefers discovered ICAO24 over the airline flight number and calls
   assert.equal(validIcao24('nothex'),false);
 });
 
-test('adsb.fi never maps flightNo into callsign and handles missing identifiers, no aircraft, and rate limits',async()=>{
+test('adsb.fi never maps flightNo into callsign and treats no aircraft as a successful no-live-signal state',async()=>{
   clearTrackingCache();
   const provider=createAirTrackingProvider({minRequestIntervalMs:0,fetchImpl:async()=>jsonResponse({ac:[]})});
   await assert.rejects(()=>provider.fetch({flightNo:'NH967'}),error=>error.code==='TRACKING_IDENTIFIER_REQUIRED');
-  await assert.rejects(()=>provider.fetch({callsign:'ANA967'}),error=>error.code==='AIRCRAFT_NOT_FOUND');
+  const missing=await provider.fetch({callsign:'ANA967'});assert.equal(missing.ok,true);assert.equal(missing.state,'no_live_signal');assert.equal(missing.position,null);
   const rateLimited=createAirTrackingProvider({minRequestIntervalMs:0,fetchImpl:async()=>jsonResponse({},429)});
   await assert.rejects(()=>rateLimited.fetch({icao24:'abc123'}),error=>error.code==='PROVIDER_RATE_LIMITED');
+  await assert.rejects(()=>provider.fetch({callsign:'bad-call'}),error=>error.code==='TRACKING_INVALID_CALLSIGN'&&error.status===400);
+  assert.equal(validCallsign('ANA967'),true);assert.equal(validCallsign('bad-call'),false);
+});
+
+test('adsb.fi maps upstream 404 with no current target to no_live_signal and times out as 504',async()=>{
+  clearTrackingCache();
+  const missing=await createAirTrackingProvider({minRequestIntervalMs:0,fetchImpl:async()=>jsonResponse({},404)}).fetch({icao24:'abc123'});
+  assert.equal(missing.ok,true);assert.equal(missing.state,'no_live_signal');assert.equal(missing.position,null);
+  const timed=createAirTrackingProvider({minRequestIntervalMs:0,timeoutMs:5,fetchImpl:(_url,{signal})=>new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(new Error('aborted'))))});
+  await assert.rejects(()=>timed.fetch({icao24:'abc123'}),error=>error.code==='PROVIDER_TIMEOUT'&&error.status===504);
+});
+
+test('tracking HTTP handler returns successful no-position states as HTTP 200',async()=>{
+  const invoke=async(handler,identifiers)=>{let status=0,payload=null,headers={};const res={setHeader:(key,value)=>{headers[key]=value;return res},status:value=>{status=value;return res},json:value=>{payload=value;return res}};await handler({method:'POST',body:{identifiers}},res);return {status,payload,headers};};
+  const air=await invoke(createTrackingHandler('air',{fetchSnapshot:async()=>({state:'no_live_signal',provider:'adsb.fi',position:null,fetchedAt:'2026-09-25T00:00:00.000Z'})}),{icao24:'abc123'});
+  assert.equal(air.status,200);assert.equal(air.payload.ok,true);assert.equal(air.payload.state,'no_live_signal');assert.equal(air.payload.position,null);assert.equal(air.headers['Cache-Control'],'private, no-store');
+  const sea=await invoke(createTrackingHandler('sea',{fetchSnapshot:async()=>({state:'no_new_position',provider:'AISStream.io',position:null,fetchedAt:'2026-09-25T00:00:00.000Z'})}),{mmsi:validMmsiValue});
+  assert.equal(sea.status,200);assert.equal(sea.payload.ok,true);assert.equal(sea.payload.state,'no_new_position');assert.equal(sea.payload.position,null);
 });
 
 test('adsb.fi marks landed aircraft complete and does not invent origin, destination, or ETA',async()=>{
@@ -209,6 +230,7 @@ test('live lookup preflight requires valid MMSI or Callsign/ICAO24, never flight
   assert.equal(trackingLookupError('sea',{mmsi:validMmsiValue}),'');
   assert.equal(trackingLookupError('air',{flightNo:'NH967'}),'TRACKING_IDENTIFIER_REQUIRED');
   assert.equal(trackingLookupError('air',{callsign:'ANA967'}),'');
+  assert.equal(trackingLookupError('air',{callsign:'bad-call'}),'TRACKING_INVALID_CALLSIGN');
   assert.equal(trackingLookupError('air',{icao24:'abc123'}),'');
   assert.equal(trackingLookupError('air',{icao24:'nope'}),'TRACKING_INVALID_ICAO24');
 });
@@ -224,9 +246,21 @@ test('last known position and successful timestamp survive a refresh without a n
   const lastKnown={lat:35.1,lng:129.04,timestamp:'2026-09-24T00:00:00.000Z',source:'AISStream.io'};
   const tracking=createShipmentTracking({mode:'sea',position:lastKnown,lastSuccessfulUpdate:'2026-09-24T00:00:00.000Z',trackingStatus:'live'});
   applyPositionSnapshot(tracking,null,'2026-09-25T04:00:00.000Z');
-  assert.equal(tracking.position.lat,lastKnown.lat);assert.equal(tracking.position.lng,lastKnown.lng);assert.equal(tracking.position.timestamp,lastKnown.timestamp);assert.equal(tracking.lastSuccessfulUpdate,'2026-09-24T00:00:00.000Z');assert.equal(tracking.lastProviderUpdate,'2026-09-25T04:00:00.000Z');assert.equal(tracking.trackingStatus,'stale');
+  assert.equal(tracking.position.lat,lastKnown.lat);assert.equal(tracking.position.lng,lastKnown.lng);assert.equal(tracking.position.timestamp,lastKnown.timestamp);assert.equal(tracking.lastSuccessfulUpdate,'2026-09-24T00:00:00.000Z');assert.equal(tracking.lastProviderUpdate,'2026-09-25T04:00:00.000Z');assert.equal(tracking.trackingStatus,'last_known');assert.equal(tracking.lastProviderState,'no_new_position');
   applyPositionSnapshot(tracking,{lat:null,lng:null},'2026-09-25T04:30:00.000Z');
   assert.equal(tracking.position.lat,lastKnown.lat);assert.equal(tracking.lastSuccessfulUpdate,'2026-09-24T00:00:00.000Z');
+});
+
+test('legacy no_result or stale records with a saved position migrate to last_known',()=>{
+  const position={lat:31.2,lng:121.4,timestamp:'2026-09-24T00:00:00.000Z'};
+  assert.equal(createShipmentTracking({trackingStatus:'no_result',position}).trackingStatus,'last_known');
+  assert.equal(createShipmentTracking({trackingStatus:'stale',position}).trackingStatus,'last_known');
+});
+
+test('old provider position timestamps remain last_known and do not replace a newer saved point',()=>{
+  const current=createShipmentTracking({mode:'air',position:{lat:36,lng:140,timestamp:'2026-09-25T03:59:00.000Z'},lastSuccessfulUpdate:'2026-09-25T03:59:00.000Z'});
+  applyPositionSnapshot(current,{lat:35,lng:139,timestamp:'2026-09-25T03:00:00.000Z'},'2026-09-25T04:00:00.000Z',false,'live');
+  assert.equal(current.position.lat,36);assert.equal(current.trackingStatus,'last_known');assert.equal(current.lastProviderState,'last_known');assert.equal(current.lastSuccessfulUpdate,'2026-09-25T03:59:00.000Z');
 });
 
 test('known route names resolve to real port and airport locations while unknown names stay unresolved',()=>{
@@ -234,4 +268,3 @@ test('known route names resolve to real port and airport locations while unknown
   assert.equal(resolveTrackingLocation('NRT','airport')?.lat,35.772);assert.equal(resolveTrackingLocation('PVG','airport')?.lng,121.808);
   assert.equal(resolveTrackingLocation('user entered terminal','port'),null);assert.equal(resolveTrackingLocation('KIX','port'),null);
 });
-

@@ -33,36 +33,59 @@ export function createRouteLeg(input = {}) {
 export function createShipmentTracking(input = {}, now = isoNow()) {
   const mode = input.mode === 'air' ? 'air' : 'sea';
   const identifiers = object(input.identifiers);
+  const rawPosition=object(input.position);
+  const hasPosition=rawPosition.lat!=null&&rawPosition.lng!=null&&Number.isFinite(Number(rawPosition.lat))&&Number.isFinite(Number(rawPosition.lng))&&Math.abs(Number(rawPosition.lat))<=90&&Math.abs(Number(rawPosition.lng))<=180;
+  const requestedStatus=text(input.trackingStatus||'configured');
+  const storedPositionTime=Date.parse(rawPosition.timestamp||rawPosition.lastSeen||'');
+  const storedAgeMs=Date.parse(now)-storedPositionTime;
+  const storedPositionIsStale=hasPosition&&Number.isFinite(storedAgeMs)&&storedAgeMs>(mode==='air'?10:30)*60*1000;
+  const trackingStatus=hasPosition&&(['no_result','stale'].includes(requestedStatus)||(requestedStatus==='live'&&storedPositionIsStale))?'last_known':requestedStatus==='no_result'?'configured':requestedStatus==='stale'?'provider_unavailable':requestedStatus;
   const etaHistory = Array.isArray(input.etaHistory) ? input.etaHistory.map(entry => ({eta:text(entry.eta),source:text(entry.source||'Unknown'),observedAt:text(entry.observedAt||now)})).filter(entry => entry.eta) : [];
   return {
     id:text(input.id)||makeId('tracking'), batchId:text(input.batchId), mode,
     provider:text(input.provider || (mode==='sea'?'AISStream.io':'adsb.fi')),
-    trackingStatus:text(input.trackingStatus||'configured'), identifiers:{...identifiers},
+    trackingStatus, identifiers:{...identifiers},
     origin:{...object(input.origin),name:text(input.origin?.name),code:text(input.origin?.code),lat:input.origin?.lat==null?null:Number(input.origin.lat),lng:input.origin?.lng==null?null:Number(input.origin.lng)},
     destination:{...object(input.destination),name:text(input.destination?.name),code:text(input.destination?.code),lat:input.destination?.lat==null?null:Number(input.destination.lat),lng:input.destination?.lng==null?null:Number(input.destination.lng)},
     carrier:{...object(input.carrier),name:text(input.carrier?.name),vesselOrFlight:text(input.carrier?.vesselOrFlight),voyageNo:text(input.carrier?.voyageNo)},
     schedule:{...object(input.schedule),etd:text(input.schedule?.etd),eta:text(input.schedule?.eta),etaSource:text(input.schedule?.etaSource),etaUpdatedAt:text(input.schedule?.etaUpdatedAt),scheduledDeparture:text(input.schedule?.scheduledDeparture),actualDeparture:text(input.schedule?.actualDeparture),estimatedArrival:text(input.schedule?.estimatedArrival),actualArrival:text(input.schedule?.actualArrival),flightStatus:text(input.schedule?.flightStatus),delayMinutes:Number(input.schedule?.delayMinutes)||0},
-    position:{...object(input.position),lat:input.position?.lat==null?null:Number(input.position.lat),lng:input.position?.lng==null?null:Number(input.position.lng),speed:input.position?.speed==null?null:Number(input.position.speed),course:input.position?.course==null?null:Number(input.position.course),altitude:input.position?.altitude==null?null:Number(input.position.altitude),heading:input.position?.heading==null?null:Number(input.position.heading),verticalRate:input.position?.verticalRate==null?null:Number(input.position.verticalRate),timestamp:text(input.position?.timestamp),lastSeen:text(input.position?.lastSeen),source:text(input.position?.source)},
+    position:{...rawPosition,lat:rawPosition.lat==null?null:Number(rawPosition.lat),lng:rawPosition.lng==null?null:Number(rawPosition.lng),speed:rawPosition.speed==null?null:Number(rawPosition.speed),course:rawPosition.course==null?null:Number(rawPosition.course),altitude:rawPosition.altitude==null?null:Number(rawPosition.altitude),heading:rawPosition.heading==null?null:Number(rawPosition.heading),verticalRate:rawPosition.verticalRate==null?null:Number(rawPosition.verticalRate),timestamp:text(rawPosition.timestamp),lastSeen:text(rawPosition.lastSeen),source:text(rawPosition.source)},
     events:Array.isArray(input.events)?input.events.map(event=>createTrackingEvent(event,now)):[],
     alerts:Array.isArray(input.alerts)?input.alerts.map(alert=>({...alert,id:text(alert.id)||makeId('alert')})):[],
     etaHistory,routeLegs:Array.isArray(input.routeLegs)?input.routeLegs.map(createRouteLeg):[],
     freeTimeDays:input.freeTimeDays==null||input.freeTimeDays===''?null:Math.max(0,Number(input.freeTimeDays)||0),
     freeTimeEndDate:text(input.freeTimeEndDate)||null,
-    lastProviderUpdate:text(input.lastProviderUpdate)||null,lastSystemUpdate:text(input.lastSystemUpdate)||now,
+    lastProviderUpdate:text(input.lastProviderUpdate)||null,lastProviderState:text(input.lastProviderState)||(trackingStatus==='live'?'live':trackingStatus==='last_known'?(storedPositionIsStale?'last_known':'no_live_signal'):trackingStatus),lastSystemUpdate:text(input.lastSystemUpdate)||now,
     lastSuccessfulUpdate:text(input.lastSuccessfulUpdate)||null,lastProviderError:text(input.lastProviderError)||'',
     createdAt:text(input.createdAt)||now,updatedAt:text(input.updatedAt)||now
   };
 }
 
-export function applyPositionSnapshot(tracking, position, fetchedAt, completed = false) {
+export function applyPositionSnapshot(tracking, position, fetchedAt, completed = false, providerState = '') {
   const lat=Number(position?.lat),lng=Number(position?.lng);
   const validPosition=position&&position.lat!=null&&position.lat!==''&&position.lng!=null&&position.lng!==''&&Number.isFinite(lat)&&Number.isFinite(lng)&&Math.abs(lat)<=90&&Math.abs(lng)<=180;
   if(validPosition){
-    tracking.position={...position,lat,lng};
-    tracking.lastSuccessfulUpdate=fetchedAt||new Date().toISOString();
-    tracking.trackingStatus=completed?'completed':'live';
+    const updateTime=fetchedAt||new Date().toISOString();
+    const positionTime=Date.parse(position.timestamp||position.lastSeen||updateTime),fetchedTime=Date.parse(updateTime);
+    const maxLiveAgeMs=tracking.mode==='air'?10*60*1000:30*60*1000;
+    const ageMs=fetchedTime-positionTime;
+    const recent=Number.isFinite(positionTime)&&Number.isFinite(fetchedTime)&&ageMs>=-5*60*1000&&ageMs<=maxLiveAgeMs;
+    const previousTime=Date.parse(tracking.position?.timestamp||tracking.position?.lastSeen||'');
+    const notOlder=!Number.isFinite(previousTime)||!Number.isFinite(positionTime)||positionTime>=previousTime;
+    if(notOlder)tracking.position={...position,lat,lng};
+    if(recent&&notOlder){
+      tracking.lastSuccessfulUpdate=updateTime;
+      tracking.lastProviderState='live';
+      tracking.trackingStatus=completed?'completed':'live';
+    }else{
+      tracking.lastProviderState='last_known';
+      tracking.trackingStatus=completed?'completed':'last_known';
+    }
   }else{
-    tracking.trackingStatus=completed?'completed':tracking.position?.lat!=null&&tracking.position?.lng!=null?'stale':'no_result';
+    const state=providerState|| (tracking.mode==='sea'?'no_new_position':'no_live_signal');
+    tracking.lastProviderState=state;
+    const hasLastPosition=tracking.position?.lat!=null&&tracking.position?.lng!=null&&Number.isFinite(Number(tracking.position.lat))&&Number.isFinite(Number(tracking.position.lng));
+    tracking.trackingStatus=completed?'completed':hasLastPosition?'last_known':state;
   }
   if(fetchedAt)tracking.lastProviderUpdate=fetchedAt;
   return tracking;
@@ -119,4 +142,3 @@ export function getSuggestedBatchStatus(tracking,batchStatus) {
   if(!status||status===batchStatus)return null;
   return {status,event:latest,requiresConfirmation:['released','warehouse_received'].includes(status)||latest.source==='manual'};
 }
-
