@@ -32,3 +32,17 @@
 ## 说明
 
 报价和税费计算仅用于成本估算，最终金额请以承运商、报关行和税务单据为准。
+
+
+## P2 实时物流追踪
+
+追踪记录保存在所属货批中，每批可添加多条海运或空运记录。海运按船名/IMO/MMSI 查询 AIS 船位，空运按航班号查询航班状态与位置；空运服务查询的是航班信息，不是 AWB 货物扫描记录。供应商无法返回的数据会保持为空，不会推测清关或签收状态。批次状态只显示建议，需用户确认后才会更新。
+
+在 Vercel 的项目环境变量中按需配置以下服务端密钥。密钥仅由 `/api/tracking/sea` 和 `/api/tracking/air` 使用，不要放入 `index.html` 或前端配置：
+
+- `MARINETRAFFIC_API_KEY`：MarineTraffic Vessel Positions API 访问密钥。
+- `AIRNAV_API_KEY`：AirNav Radar API Bearer token。
+
+缺少密钥、供应商限流或无匹配结果时，追踪页会保留最近一次成功数据并显示状态。服务端函数实例内有短期缓存（海运 3 分钟、空运 1 分钟）；这不是跨实例共享缓存。船舶位置、航班状态、预计到达时间和轨迹覆盖范围取决于相应供应商账户权限及数据可用性。地图使用 OpenStreetMap 瓦片并保留署名。
+
+本地回归检查：在源码目录运行 `node tests/phase0.test.mjs`、`node tests/phase1-a.test.mjs`、`node tests/phase1-b.test.mjs`、`node tests/phase1-c.test.mjs`、`node tests/phase1-d.test.mjs` 和 `node tests/phase2.test.mjs`。

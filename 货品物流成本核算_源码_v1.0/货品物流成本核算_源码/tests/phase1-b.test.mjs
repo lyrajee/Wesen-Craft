@@ -19,13 +19,13 @@ test('v1 batches migrate without dropping products, FX, notes or locations; DDP 
   const old={schemaVersion:1,batches:[{id:'b-1',name:'Old',supplier:'S',originPort:'Kobe',destinationPort:'Shanghai',notes:'keep',items:[{id:'i-1',name:'Item',qty:2,price:100,weight:1,volume:.2,duty:8,vat:13}],exchangeRates:fx,selectedRoute:'ddp'}],activeBatchId:'b-1'};
   const storage=createMemoryStorage({[STORAGE_KEY]:JSON.stringify(old)});
   const repo=createBatchRepository(storage),batch=repo.initialize().batches[0];
-  assert.equal(repo.data.schemaVersion,2);
+  assert.equal(repo.data.schemaVersion,3);
   assert.equal(batch.selectedRoute,null);
   assert.equal(batch.legacyRoute,'ddp');
   assert.equal(batch.items[0].id,'i-1');
   assert.equal(batch.exchangeRates.JPY_CNY.rate,.05);
   assert.equal(batch.supplier,'S');assert.equal(batch.originPort,'Kobe');assert.equal(batch.notes,'keep');
-  assert.equal(JSON.parse(storage.getItem(STORAGE_KEY)).schemaVersion,2);
+  assert.equal(JSON.parse(storage.getItem(STORAGE_KEY)).schemaVersion,3);
 });
 
 test('legacy sea selection maps to LCL and FCL has no fabricated fixed price',()=>{
