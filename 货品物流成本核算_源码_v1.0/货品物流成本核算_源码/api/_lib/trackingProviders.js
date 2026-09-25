@@ -13,7 +13,12 @@ function numberOrNull(value){if(value===''||value==null||value==='ground')return
 function validMmsi(value){return /^\d{9}$/.test(text(value));}
 function validIcao24(value){return /^[0-9a-f]{6}$/i.test(text(value));}
 function parseMessage(data){try{return JSON.parse(Buffer.isBuffer(data)?data.toString('utf8'):String(data));}catch{return null;}}
-function dateFromEpochSeconds(value,fallback){const seconds=numberOrNull(value);return seconds==null?fallback:new Date(seconds*1000).toISOString();}
+function adsbLastSeen(nowValue,seenSeconds,fallback){
+  const now=numberOrNull(nowValue),seen=numberOrNull(seenSeconds);
+  if(now==null||seen==null)return fallback;
+  const timestampMs=(now>1e12?now:now*1000)-seen*1000,date=new Date(timestampMs);
+  return Number.isNaN(date.getTime())?fallback:date.toISOString();
+}
 function matchingMmsi(message,mmsi){
   const meta=message&&message.MetaData||{},body=message&&message.Message||{};
   const supplied=meta.MMSI||body.PositionReport&&body.PositionReport.UserID||body.ShipStaticData&&body.ShipStaticData.UserID;
@@ -126,8 +131,7 @@ function createAirTrackingProvider({fetchImpl=fetch,now=()=>new Date(),minReques
       });
       if(!record)throw new TrackingProviderError('AIRCRAFT_NOT_FOUND',404);
       const fetchedAt=now().toISOString(),seen=numberOrNull(record.seen_pos==null?record.seen:record.seen_pos);
-      const responseTime=numberOrNull(payload&&payload.now);
-      return {record,fetchedAt,lastSeen:seen==null||responseTime==null?fetchedAt:dateFromEpochSeconds(responseTime-seen,fetchedAt)};
+      return {record,fetchedAt,lastSeen:adsbLastSeen(payload&&payload.now,seen,fetchedAt)};
     },
     async fetch(identifiers={}){
       const result=await this.search(identifiers),record=result.record,lat=numberOrNull(record.lat),lng=numberOrNull(record.lon);
