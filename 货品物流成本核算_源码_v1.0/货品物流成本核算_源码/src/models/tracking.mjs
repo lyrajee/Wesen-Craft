@@ -36,13 +36,13 @@ export function createShipmentTracking(input = {}, now = isoNow()) {
   const etaHistory = Array.isArray(input.etaHistory) ? input.etaHistory.map(entry => ({eta:text(entry.eta),source:text(entry.source||'Unknown'),observedAt:text(entry.observedAt||now)})).filter(entry => entry.eta) : [];
   return {
     id:text(input.id)||makeId('tracking'), batchId:text(input.batchId), mode,
-    provider:text(input.provider || (mode==='sea'?'MarineTraffic':'AirNav Radar')),
+    provider:text(input.provider || (mode==='sea'?'AISStream.io':'adsb.fi')),
     trackingStatus:text(input.trackingStatus||'configured'), identifiers:{...identifiers},
     origin:{...object(input.origin),name:text(input.origin?.name),code:text(input.origin?.code),lat:input.origin?.lat==null?null:Number(input.origin.lat),lng:input.origin?.lng==null?null:Number(input.origin.lng)},
     destination:{...object(input.destination),name:text(input.destination?.name),code:text(input.destination?.code),lat:input.destination?.lat==null?null:Number(input.destination.lat),lng:input.destination?.lng==null?null:Number(input.destination.lng)},
     carrier:{...object(input.carrier),name:text(input.carrier?.name),vesselOrFlight:text(input.carrier?.vesselOrFlight),voyageNo:text(input.carrier?.voyageNo)},
     schedule:{...object(input.schedule),etd:text(input.schedule?.etd),eta:text(input.schedule?.eta),etaSource:text(input.schedule?.etaSource),etaUpdatedAt:text(input.schedule?.etaUpdatedAt),scheduledDeparture:text(input.schedule?.scheduledDeparture),actualDeparture:text(input.schedule?.actualDeparture),estimatedArrival:text(input.schedule?.estimatedArrival),actualArrival:text(input.schedule?.actualArrival),flightStatus:text(input.schedule?.flightStatus),delayMinutes:Number(input.schedule?.delayMinutes)||0},
-    position:{...object(input.position),lat:input.position?.lat==null?null:Number(input.position.lat),lng:input.position?.lng==null?null:Number(input.position.lng),speed:input.position?.speed==null?null:Number(input.position.speed),course:input.position?.course==null?null:Number(input.position.course),altitude:input.position?.altitude==null?null:Number(input.position.altitude),heading:input.position?.heading==null?null:Number(input.position.heading),timestamp:text(input.position?.timestamp),source:text(input.position?.source)},
+    position:{...object(input.position),lat:input.position?.lat==null?null:Number(input.position.lat),lng:input.position?.lng==null?null:Number(input.position.lng),speed:input.position?.speed==null?null:Number(input.position.speed),course:input.position?.course==null?null:Number(input.position.course),altitude:input.position?.altitude==null?null:Number(input.position.altitude),heading:input.position?.heading==null?null:Number(input.position.heading),verticalRate:input.position?.verticalRate==null?null:Number(input.position.verticalRate),timestamp:text(input.position?.timestamp),lastSeen:text(input.position?.lastSeen),source:text(input.position?.source)},
     events:Array.isArray(input.events)?input.events.map(event=>createTrackingEvent(event,now)):[],
     alerts:Array.isArray(input.alerts)?input.alerts.map(alert=>({...alert,id:text(alert.id)||makeId('alert')})):[],
     etaHistory,routeLegs:Array.isArray(input.routeLegs)?input.routeLegs.map(createRouteLeg):[],
@@ -105,3 +105,4 @@ export function getSuggestedBatchStatus(tracking,batchStatus) {
   if(!status||status===batchStatus)return null;
   return {status,event:latest,requiresConfirmation:['released','warehouse_received'].includes(status)||latest.source==='manual'};
 }
+
