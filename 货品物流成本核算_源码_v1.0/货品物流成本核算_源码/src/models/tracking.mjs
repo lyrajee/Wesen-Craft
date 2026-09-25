@@ -36,9 +36,10 @@ export function createShipmentTracking(input = {}, now = isoNow()) {
   const rawPosition=object(input.position);
   const hasPosition=rawPosition.lat!=null&&rawPosition.lng!=null&&Number.isFinite(Number(rawPosition.lat))&&Number.isFinite(Number(rawPosition.lng))&&Math.abs(Number(rawPosition.lat))<=90&&Math.abs(Number(rawPosition.lng))<=180;
   const requestedStatus=text(input.trackingStatus||'configured');
-  const storedPositionTime=Date.parse(rawPosition.timestamp||rawPosition.lastSeen||'');
+  const storedPositionStamp=rawPosition.timestamp||rawPosition.lastSeen||input.lastSuccessfulUpdate||input.lastProviderUpdate||'';
+  const storedPositionTime=Date.parse(storedPositionStamp);
   const storedAgeMs=Date.parse(now)-storedPositionTime;
-  const storedPositionIsStale=hasPosition&&Number.isFinite(storedAgeMs)&&storedAgeMs>(mode==='air'?10:30)*60*1000;
+  const storedPositionIsStale=hasPosition&&(!Number.isFinite(storedPositionTime)||!Number.isFinite(storedAgeMs)||storedAgeMs>(mode==='air'?10:30)*60*1000);
   const trackingStatus=hasPosition&&(['no_result','stale'].includes(requestedStatus)||(requestedStatus==='live'&&storedPositionIsStale))?'last_known':requestedStatus==='no_result'?'configured':requestedStatus==='stale'?'provider_unavailable':requestedStatus;
   const etaHistory = Array.isArray(input.etaHistory) ? input.etaHistory.map(entry => ({eta:text(entry.eta),source:text(entry.source||'Unknown'),observedAt:text(entry.observedAt||now)})).filter(entry => entry.eta) : [];
   return {

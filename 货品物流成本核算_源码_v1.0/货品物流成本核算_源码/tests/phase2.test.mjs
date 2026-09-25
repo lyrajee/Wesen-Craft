@@ -255,6 +255,7 @@ test('legacy no_result or stale records with a saved position migrate to last_kn
   const position={lat:31.2,lng:121.4,timestamp:'2026-09-24T00:00:00.000Z'};
   assert.equal(createShipmentTracking({trackingStatus:'no_result',position}).trackingStatus,'last_known');
   assert.equal(createShipmentTracking({trackingStatus:'stale',position}).trackingStatus,'last_known');
+  assert.equal(createShipmentTracking({mode:'air',trackingStatus:'live',position:{lat:31.2,lng:121.4},lastSuccessfulUpdate:'2026-09-25T00:00:00.000Z'},'2026-09-25T01:00:00.000Z').trackingStatus,'last_known');
 });
 
 test('old provider position timestamps remain last_known and do not replace a newer saved point',()=>{
