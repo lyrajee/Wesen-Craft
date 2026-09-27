@@ -36,17 +36,92 @@
     .quote-review{min-width:1600px}.quote-matrix{min-width:760px;table-layout:auto}.quote-matrix th:first-child{min-width:190px}.quote-matrix td{min-width:170px;white-space:normal}.quote-review input[type=checkbox]{width:18px;min-height:18px}
     .landed-table{min-width:1680px}.p1-cell-note{display:block;margin-top:2px;color:var(--muted);font-size:10px;font-weight:400}.p1-allocation{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;padding:12px 16px;border-bottom:1px solid var(--line)}.p1-allocation select,.p1-allocation input{min-height:36px;padding:6px 8px;border:1px solid var(--line-strong);border-radius:6px;background:#fff}.p1-allocation>span{color:var(--muted);font-size:12px}.p1-custom{display:flex;flex-wrap:wrap;gap:8px;flex-basis:100%}.p1-custom[hidden]{display:none}.p1-custom label{display:flex;align-items:center;gap:5px;font-size:12px}.p1-custom input{width:78px}.p1-allocation .hint{flex-basis:100%;margin:0}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
+    /* UI 2.0 — compact, data-led refinement within the existing neutral system */
+    .headline{align-items:flex-start;margin-bottom:28px}
+    .headline h1{font-size:22px;font-weight:650;letter-spacing:-.02em}
+    .headline p{margin-top:6px;font-size:13px;line-height:1.5}
+    .declare-summary{margin-bottom:32px;border-radius:10px;box-shadow:none}
+    .summary-metric strong{font-variant-numeric:tabular-nums}
+    .summary-metric.total strong{font-size:20px;line-height:1.25;font-weight:650}
+    .section-head{margin-bottom:12px}
+    .section-head h2{font-size:17px;letter-spacing:-.01em}
+    .section-head .hint{margin-top:4px}
+    .nav-icon{width:17px;height:17px}
+    .tabs button{min-height:42px;transition:background-color 160ms ease,color 160ms ease}
+    .tabs button:focus-visible{box-shadow:inset 0 0 0 1px var(--focus-border),var(--focus)}
+    .btn{transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease}
+    .field label{font-size:12px;font-weight:600}
+    .field input,.field select,.lookup input,.p1-grid input,.p1-grid select,
+    .p1-allocation input,.p1-allocation select,.batch-form .field input,.batch-form .field select{
+      border-radius:6px;transition:border-color 160ms ease,background-color 160ms ease,box-shadow 160ms ease
+    }
+    .field input:focus-visible,.field select:focus-visible,.p1-allocation input:focus-visible,
+    .p1-allocation select:focus-visible,.batch-form .field input:focus-visible,.batch-form .field select:focus-visible{
+      border-color:var(--focus-border);outline:0;box-shadow:var(--focus)
+    }
+    .declaration-table{min-width:0}
+    .declaration-table th,.declaration-table td{padding-right:5px;padding-left:5px}
+    .declaration-table th{font-size:11.5px}
+    .declaration-table .col-number,.declaration-table .col-money,.declaration-table .col-measure,
+    .landed-table .col-number,.landed-table .col-money,.landed-table .col-measure{text-align:right}
+    .declaration-table .col-number input,.declaration-table .col-money input,.declaration-table .col-measure input{
+      padding-right:3px;text-align:right
+    }
+    #landed>.card{overflow:visible;border:0;border-radius:0;background:transparent}
+    #landed .landed-tabs{padding:0 0 0}
+    #landed .p1-allocation{padding-right:0;padding-left:0}
+    #landed .route-kpis{padding-right:0;padding-left:0;background:transparent}
+    #landed .tablewrap{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    #landedKpis span:last-child{margin-left:auto}#landedKpis span:last-child b{font-size:16px;font-weight:650}
+    #lookup .sources{grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin-top:22px;border-top:1px solid var(--line)}
+    .quote-actions{display:flex;justify-content:flex-end;margin-bottom:12px}
+    #lookup .source{min-height:62px;padding:12px 14px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent}
+    #lookup .source:nth-child(odd){border-right:1px solid var(--line)}
+    #lookup .source:hover{background:var(--surface-soft)}
+    #customs .p1-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}
+    .p1-section{margin-top:28px;padding-top:20px}
+    @media(min-width:1200px){
+      .declaration-table{min-width:0}
+      .declaration-table th{white-space:nowrap}
+    }
+    @media(max-width:1199px){.declaration-table{min-width:1100px}}
+    @media(max-width:840px){
+      .headline{margin-bottom:22px}
+      .declare-summary{margin-bottom:26px}
+    }
+    @media(max-width:620px){
+      .tabs{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-top:4px}
+      .tabs button{min-height:52px;padding:5px 2px;font-size:10px}
+      .headline h1{font-size:20px}
+      .summary-metric.total strong{font-size:17px}
+      #customs .p1-grid{grid-template-columns:minmax(0,1fr);gap:12px}
+      #lookup .source{min-height:64px;padding:10px 9px}
+      .declaration-params{gap:12px 10px}
+      .field input,.field select{min-height:40px}
+    }
+    @media(max-width:620px){
+      .langs button,.batch-bar .btn,.batch-bar select,.fx input,.field input,.field select{min-height:44px}
+      #landed .landed-tabs button,.tracking-mode-tab,.tracking-toolbar .btn,.tracking-record{min-height:44px}
+      .table input,.table select,.batch-form .field input,.batch-form .field select{min-height:44px}
+      .batch-dialog-head .btn,.batch-table .batch-actions .btn{min-height:44px}
+      .route-details summary{display:block;min-height:44px;padding-top:12px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+    }
   </style>
+  <link rel="stylesheet" href="./src/ui/ui21.css">
 </head>
 <body>
-  <svg class="icon-sprite" aria-hidden="true" focusable="false"><symbol id="i-declaration" viewBox="0 0 24 24"><path d="M8 4.5h8a1.5 1.5 0 0 1 1.5 1.5v13H6.5V6A1.5 1.5 0 0 1 8 4.5Z" fill="currentColor" opacity=".10"/><path d="M9 4h6a2 2 0 0 1 2 2v1h2a1.5 1.5 0 0 1 1.5 1.5v11A1.5 1.5 0 0 1 19 21H7a1.5 1.5 0 0 1-1.5-1.5v-11A1.5 1.5 0 0 1 7 7h2V6a2 2 0 0 1 2-2Zm0 3h6M9 12h6m-6 4h6"/></symbol><symbol id="i-route" viewBox="0 0 24 24"><path d="M6 6.5a2.5 2.5 0 1 0 0-.01ZM18 17.5a2.5 2.5 0 1 0 0-.01Z" fill="currentColor" opacity=".10"/><circle cx="6" cy="6.5" r="2.5"/><circle cx="18" cy="17.5" r="2.5"/><path d="M8.5 6.5h4a3 3 0 0 1 3 3v5a3 3 0 0 0 3 3M6 9v6a2.5 2.5 0 0 0 2.5 2.5H15"/></symbol><symbol id="i-cost" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2" fill="currentColor" opacity=".08"/><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8.5 7.5h7m-7 4h1m3 0h1m-5 3h1m3 0h1m-5 3h1m3 0h1"/></symbol><symbol id="i-quote" viewBox="0 0 24 24"><path d="M5 4h14v16H5z" fill="currentColor" opacity=".08"/><path d="M7 4h10l2 2v14H5V6l2-2Zm2 5h6m-6 4h6m-6 4h4"/></symbol><symbol id="i-customs" viewBox="0 0 24 24"><path d="M5 5h14v14H5z" fill="currentColor" opacity=".08"/><path d="M7 4h10l2 2v14H5V6l2-2Zm1 6h8m-8 4h8m-8 4h4"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="currentColor" opacity=".08"/><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5"/></symbol><symbol id="i-add" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-import" viewBox="0 0 24 24"><path d="M12 15V4m-4 4 4-4 4 4M5 14v5h14v-5"/></symbol><symbol id="i-export" viewBox="0 0 24 24"><path d="M12 4v11m-4-4 4 4 4-4M5 15v4h14v-4"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 2M4 16l2 2a7 7 0 0 0 12.4-3"/></symbol><symbol id="i-delete" viewBox="0 0 24 24"><path d="M4 6.5h16M9 6.5V4h6v2.5m3 0-.9 13H6.9L6 6.5m3.5 4v5m5-5v5"/></symbol><symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></symbol></svg>
+  <svg class="icon-sprite" aria-hidden="true" focusable="false"><symbol id="i-declaration" viewBox="0 0 24 24"><path d="m4 8 8-4 8 4-8 4-8-4Z"/><path d="M4 8v8l8 4 8-4V8M12 12v8M8 6l8 4"/></symbol><symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 6h3a3 3 0 0 1 3 3v1a3 3 0 0 0 3 3h1M6 8v6a4 4 0 0 0 4 4h6M16 16l2 2 2-2"/></symbol><symbol id="i-tracking" viewBox="0 0 24 24"><path d="M19 10.2c0 5-7 10.3-7 10.3S5 15.2 5 10.2a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.2"/></symbol><symbol id="i-cost" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8 6.5h8v3H8zM8 13h1m3 0h1m3 0h1m-8 3h1m3 0h1m3 0h1"/></symbol><symbol id="i-quote" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-3-2-3 2-3-2-3 2v-17Z"/><path d="M9 8h6m-6 4h6m-6 4h3"/></symbol><symbol id="i-customs" viewBox="0 0 24 24"><path d="M12 3v16m-5 2h10M6 7h12M8 7l-3 6h6L8 7Zm8 0-3 6h6l-3-6Z"/><path d="M5 13c.6 1 1.5 1.5 3 1.5s2.4-.5 3-1.5m2 0c.6 1 1.5 1.5 3 1.5s2.4-.5 3-1.5"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="currentColor" opacity=".08"/><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5"/></symbol><symbol id="i-add" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-import" viewBox="0 0 24 24"><path d="M12 15V4m-4 4 4-4 4 4M5 14v5h14v-5"/></symbol><symbol id="i-export" viewBox="0 0 24 24"><path d="M12 4v11m-4-4 4 4 4-4M5 15v4h14v-4"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 2M4 16l2 2a7 7 0 0 0 12.4-3"/></symbol><symbol id="i-delete" viewBox="0 0 24 24"><path d="M4 6.5h16M9 6.5V4h6v2.5m3 0-.9 13H6.9L6 6.5m3.5 4v5m5-5v5"/></symbol><symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></symbol><symbol id="i-package" viewBox="0 0 24 24"><path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="M4 7v10l8 4 8-4V7M12 11v10M8 5l8 4"/></symbol><symbol id="i-wallet" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="14" rx="3"/><path d="M3.5 9h17M15 14h2"/></symbol><symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 4v16M5 7h14M4 20h16M5 7l-3 6h6L5 7Zm14 0-3 6h6l-3-6Z"/></symbol><symbol id="i-tax" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-2.5-1.5-2.5 1.5-2.5-1.5L8 20.5l-2-1.5v-15.5Z"/><path d="M9 8h6m-5 4 4 4m0-4-4 4"/></symbol></svg>
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand"><span class="brand-name">WESEN CRAFT</span><span class="brand-description" data-i="appDescriptor">物流成本核算</span></div>
       <nav class="tabs" aria-label="sections" role="tablist">
         <button id="tab-declare" class="on" role="tab" aria-selected="true" aria-controls="declare" data-tab="declare"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-declaration"></use></svg><span data-i="tabDeclare">产品申报</span></button>
         <button id="tab-routes" role="tab" aria-selected="false" aria-controls="routes" data-tab="routes"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-route"></use></svg><span data-i="tabRoutes">路线比较</span></button>
-        <button id="tab-tracking" role="tab" aria-selected="false" aria-controls="tracking" data-tab="tracking"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-route"></use></svg><span data-i="tabTracking">实时航线</span></button>
+        <button id="tab-tracking" role="tab" aria-selected="false" aria-controls="tracking" data-tab="tracking"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-tracking"></use></svg><span data-i="tabTracking">实时航线</span></button>
         <button id="tab-quotes" role="tab" aria-selected="false" aria-controls="quotes" data-tab="quotes"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-quote"></use></svg><span data-i="tabQuotes">货代报价</span></button>
         <button id="tab-landed" role="tab" aria-selected="false" aria-controls="landed" data-tab="landed"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-cost"></use></svg><span data-i="tabLanded">货品到仓成本</span></button>
         <button id="tab-customs" role="tab" aria-selected="false" aria-controls="customs" data-tab="customs"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-customs"></use></svg><span data-i="tabCustoms">海关税率</span></button>
@@ -64,9 +139,41 @@
     <div class="batch-bar" role="group" aria-label="Import batch controls"><label for="activeBatchSelect"><span data-i="activeBatchLabel">当前批次</span><select id="activeBatchSelect"></select></label><span id="batchSaveStatus" class="batch-save-status" role="status" aria-live="polite"></span><button class="btn secondary" id="quickNewBatch" type="button"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-add"></use></svg><span data-i="newBatch">新建批次</span></button><button class="btn secondary" id="openBatchManager" type="button"><span data-i="batchManage">批次管理</span></button></div>
     <dialog id="batchManagerDialog" class="batch-dialog" aria-labelledby="batchManagerTitle"><div class="batch-dialog-head"><div><h2 id="batchManagerTitle" data-i="batchManage">批次管理</h2><p class="hint" data-i="batchManagerHint">创建、切换并维护进口批次。复制批次会复制商品与当前汇率，不复制运输和结算记录。</p></div><button class="btn secondary" id="closeBatchManager" type="button" data-i="close">关闭</button></div><form id="batchCreateForm" class="batch-form"><div class="field"><label for="batchName" data-i="batchName">批次名称</label><input id="batchName" name="batchName" required maxlength="80"></div><div class="field"><label for="batchNo" data-i="batchNo">批次号</label><input id="batchNo" name="batchNo" maxlength="40"></div><div class="field"><label for="batchSupplier" data-i="supplier">供应商</label><input id="batchSupplier" name="supplier"></div><div class="field"><label for="batchPurchaseDate" data-i="purchaseDate">采购日期</label><input id="batchPurchaseDate" name="purchaseDate" type="date"></div><div class="field"><label for="batchOriginCountry" data-i="originCountry">起运国家</label><input id="batchOriginCountry" name="originCountry" value="Japan"></div><div class="field"><label for="batchOriginPort" data-i="originPort">起运港</label><input id="batchOriginPort" name="originPort"></div><div class="field"><label for="batchDestinationCountry" data-i="destinationCountry">目的国家</label><input id="batchDestinationCountry" name="destinationCountry" value="China"></div><div class="field"><label for="batchDestinationPort" data-i="destinationPort">目的港</label><input id="batchDestinationPort" name="destinationPort" value="Shanghai"></div><div class="field"><label for="batchNewStatus" data-i="batchStatusLabel">状态</label><select id="batchNewStatus" name="status"><option value="draft" data-i="batchStatus_draft">草稿</option><option value="waiting_quote" data-i="batchStatus_waiting_quote">待报价</option><option value="route_confirmed" data-i="batchStatus_route_confirmed">已确认路线</option><option value="booked" data-i="batchStatus_booked">已订舱</option><option value="departed" data-i="batchStatus_departed">已发运</option><option value="in_transit" data-i="batchStatus_in_transit">运输中</option><option value="arrived" data-i="batchStatus_arrived">已到港</option><option value="customs" data-i="batchStatus_customs">清关中</option><option value="released" data-i="batchStatus_released">已放行</option><option value="domestic_delivery" data-i="batchStatus_domestic_delivery">国内运输</option><option value="warehouse_received" data-i="batchStatus_warehouse_received">已到仓</option><option value="settled" data-i="batchStatus_settled">已结算</option></select></div><div class="batch-form-actions"><button class="btn primary" type="submit" data-i="batchCreate">创建批次</button></div></form><div class="batch-table-wrap tablewrap" role="region" aria-label="Batch list" tabindex="0"><table class="table batch-table"><caption class="sr-only" data-i="batchManager">批次管理</caption><thead><tr><th><span data-i="batchName">批次名称</span></th><th><span data-i="batchNo">批次号</span></th><th><span data-i="supplier">供应商</span></th><th><span data-i="batchStatusLabel">状态</span></th><th class="col-number"><span data-i="batchItems">商品数</span></th><th class="col-money"><span data-i="batchGoodsJpy">货值 JPY</span></th><th><span data-i="updatedAtHeader">更新时间</span></th><th><span data-i="batchActions">操作</span></th></tr></thead><tbody id="batchManagerRows"></tbody></table></div></dialog>
     <section class="panel on" id="declare" role="tabpanel" aria-labelledby="tab-declare" tabindex="0">
-      <section class="declare-summary" aria-labelledby="batchOverviewTitle"><div class="overview-heading"><h2 id="batchOverviewTitle" data-i="batchOverview">本批概览</h2></div><div class="overview-grid"><div class="summary-metric"><span data-i="batchCount">货品条目 / 件数</span><strong><span id="sumItemCount">0</span><small class="summary-small" data-i="rowsUnit">条</small><span aria-hidden="true">·</span><span id="sumQty">0</span><small class="summary-small" data-i="piecesUnit">件</small></strong></div><div class="summary-metric"><span data-i="goodsJpy">货值 JPY</span><strong id="sumJpy">¥0</strong></div><div class="summary-metric"><span data-i="goodsCny">货值 CNY</span><strong id="sumCny">¥0</strong></div><div class="summary-metric"><span data-i="totalWeight">本批总重</span><strong id="sumWeight">0 kg</strong></div><div class="summary-metric"><span data-i="totalVolume">总体积</span><strong id="sumVolume">0 m³</strong></div><div class="summary-metric"><span data-i="dutyAmount">关税</span><strong id="sumDuty">¥0</strong></div><div class="summary-metric"><span data-i="vatAmount">增值税</span><strong id="sumVat">¥0</strong></div><div class="summary-metric total"><span data-i="totalLanded">空运到仓成本</span><strong id="sumLanded">¥0</strong><small class="metric-note"><span data-i="extraRatio">费用 / 总货值</span> <b id="sumRatio">0%</b></small></div></div><i class="bar" aria-hidden="true"><i id="ratioBar" style="width:0"></i></i></section>
+      <section class="declare-summary" aria-labelledby="batchOverviewTitle">
+        <div class="overview-heading"><div><h2 id="batchOverviewTitle" data-i="batchOverview">本批概览</h2><p class="hint" data-i="batchOverviewHint">当前批次规模、货值与成本构成</p></div><div class="overview-context"><b id="overviewContextRows">0</b> <span data-i="overviewRowsMeta">个货品条目</span></div></div>
+        <div class="overview-layout">
+          <div class="overview-kpis">
+            <article class="metric-card pieces-value"><span class="metric-icon-wrap"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-package"></use></svg></span><span class="metric-label" data-i="overviewPieces">货品总件数</span><div class="metric-value"><strong id="sumQty">0</strong><small data-i="piecesUnit">件</small></div><p class="metric-meta"><b id="sumItemCount">0</b> <span data-i="overviewRowsMeta">个货品条目</span></p></article>
+            <article class="metric-card goods-value"><span class="metric-icon-wrap"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-wallet"></use></svg></span><span class="metric-label" data-i="overviewGoodsValue">人民币货值</span><div class="metric-value"><strong id="sumCny">¥0</strong></div><p class="metric-meta" data-i="overviewGoodsValueMeta">当前批次商品货值</p></article>
+            <article class="metric-card weight-value"><span class="metric-icon-wrap"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-scale"></use></svg></span><span class="metric-label" data-i="overviewWeightVolume">总重量 / 总体积</span><div class="metric-value metric-measures"><span id="sumWeight">0.00 kg</span><span id="sumVolume">0.000 m³</span></div><p class="metric-meta" data-i="overviewWeightVolumeMeta">按当前货品数量汇总</p></article>
+            <article class="metric-card tax-value"><span class="metric-icon-wrap"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-tax"></use></svg></span><span class="metric-label" data-i="overviewTaxes">关税 + 增值税</span><div class="metric-value"><strong id="sumTax">¥0</strong></div><p class="metric-meta"><span data-i="dutyAmount">关税</span> <b id="sumDuty">¥0</b><span aria-hidden="true"> · </span><span data-i="vatAmount">增值税</span> <b id="sumVat">¥0</b></p></article>
+          </div>
+          <section class="cost-analysis" aria-labelledby="costRatioHeading">
+            <h3 id="costRatioHeading" data-i="costRatioTitle">成本占货值比例</h3><p class="hint" data-i="costRatioSubtitle">物流及税费相对于当前货值的比例</p>
+            <div class="cost-visual">
+              <div id="donutChart" class="donut-chart" data-mode="empty" role="img" aria-labelledby="costRatioHeading sumRatio">
+                <svg viewBox="0 0 128 128" aria-hidden="true" focusable="false"><circle class="donut-track" cx="64" cy="64" r="47"></circle><circle id="donutLogisticsSegment" class="donut-segment logistics" cx="64" cy="64" r="47"></circle><circle id="donutTaxSegment" class="donut-segment tax" cx="64" cy="64" r="47"></circle></svg>
+                <div class="donut-center"><span data-i="costAdditional">总附加成本</span><strong id="sumRatio">—</strong><small data-i="costShare">占本批货值</small></div>
+              </div>
+              <div class="donut-legend" aria-label="Cost chart legend">
+                <div class="donut-legend-row"><span class="legend-mark"></span><span data-i="costLogistics">物流成本</span></div>
+                <div class="donut-legend-row"><span class="legend-mark tax"></span><span data-i="costTax">税费</span></div>
+                <div id="costRemainingRow" class="donut-legend-row remaining-row"><span class="legend-mark remaining"></span><span data-i="costRemaining">剩余货值</span><b id="costRemainingPct">—</b></div>
+              </div>
+            </div>
+            <p id="costDonutStatus" class="cost-donut-status" role="status" aria-live="polite"></p>
+            <dl class="cost-summary">
+              <div class="cost-summary-row"><dt><span class="breakdown-mark"></span><span data-i="costLogistics">物流成本</span></dt><dd id="costLogisticsAmount">—</dd><dd id="costLogisticsPct" class="share">—</dd></div>
+              <div class="cost-summary-row"><dt><span class="breakdown-mark tax"></span><span data-i="costTax">税费</span></dt><dd id="costTaxAmount">—</dd><dd id="costTaxPct" class="share">—</dd></div>
+              <div class="cost-summary-row additional-row"><dt><span class="breakdown-mark total"></span><span data-i="costAdditional">总附加成本</span></dt><dd id="costAdditionalAmount">—</dd><dd id="costAdditionalPct" class="share">—</dd></div>
+              <div class="cost-summary-row landed-total"><dt data-i="totalLanded">当前方案到仓成本</dt><dd id="sumLanded">—</dd><dd class="share"></dd></div>
+            </dl>
+          </section>
+        </div>
+        <span id="sumJpy" hidden aria-hidden="true">¥0</span>
+      </section>
       <div class="declaration-section">
-        <div class="section-head"><div><h2 data-i="items">本批货品</h2><div class="hint" data-i="itemHint">每个产品分别填写日元单价、数量、重量与体积</div></div></div>
+        <div class="section-head items-section-head"><div><h2 data-i="items">本批货品</h2><div class="hint" data-i="itemHint">每个产品分别填写日元单价、数量、重量与体积</div></div><p class="items-section-meta"><b id="itemsHeaderRows">0</b> <span data-i="overviewRowsMeta">个货品条目</span><span aria-hidden="true"> · </span><b id="itemsHeaderQty">0</b> <span data-i="piecesUnit">件</span></p></div>
         <div class="uploadnote" id="uploadNote" role="status" aria-live="polite"></div>
         <div class="items-tablewrap tablewrap" role="region" aria-label="Declared shipment items; scroll horizontally on small screens" tabindex="0"><table class="table declaration-table"><caption class="sr-only">Declared shipment items</caption><colgroup><col style="width:16%"><col style="width:10%"><col style="width:10%"><col style="width:6%"><col style="width:9%"><col style="width:8%"><col style="width:8%"><col style="width:6%"><col style="width:6%"><col style="width:9%"><col style="width:8%"><col style="width:4%"></colgroup><thead><tr><th scope="col" class="col-text" data-i="name">品名</th><th scope="col" class="col-text" data-i="sku">SKU</th><th scope="col" class="col-text" data-i="customs_hsCode">HS Code</th><th scope="col" class="col-number" data-i="qty">数量</th><th scope="col" class="col-money" data-i="tablePriceJpy">单价 JPY</th><th scope="col" class="col-measure" data-i="tableWeightKg">单件重量 kg</th><th scope="col" class="col-measure" data-i="tableVolumeM3">单件体积 m³</th><th scope="col" class="col-number" data-i="itemDuty">Duty %</th><th scope="col" class="col-number" data-i="itemVat">VAT %</th><th scope="col" class="col-money" data-i="tableDeclaredJpy">申报价值 JPY</th><th scope="col" class="col-money" data-i="tableDeclaredCny">申报价值 CNY</th><th scope="col" class="col-action"><span class="sr-only">Actions</span></th></tr></thead><tbody id="itemRows"></tbody></table></div><p class="table-scroll-hint" data-i="tableScrollHint">可横向滚动查看全部字段</p><h2 class="params-heading" data-i="paramsTitle">申报参数</h2><div class="declaration-params"><div class="field"><label data-i="duty" for="dutyRate">统一关税</label><div class="field-control"><input id="dutyRate" type="number" value="10" min="0" step=".1"><span>%</span></div></div><div class="field"><label data-i="vat" for="vatRate">统一增值税</label><div class="field-control"><input id="vatRate" type="number" value="13" min="0" step=".1"><span>%</span></div></div><div class="field"><label data-i="otherFee" for="otherFee">其他费用</label><div class="field-control"><input id="otherFee" type="number" value="0" min="0"><span>CNY</span></div></div></div><button id="applyDefaultRates" class="btn secondary p1-defaults" type="button" data-i="applyDefaultRates">应用到未填写税率的货品</button>
       </div>
@@ -122,7 +229,10 @@
   Object.assign(dict.zh,{landedIntl:'分摊国际物流',landedInsurance:'分摊保险',landedCustomsValue:'预计完税价格',landedConsumption:'消费税',landedDomestic:'国内物流',landedSource:'运输成本来源',allocationBasis:'运费分摊方式',allocationCurrent:'当前分摊方式',basis_weight:'按重量',basis_volume:'按体积',basis_value:'按货值',basis_quantity:'按数量',basis_custom:'自定义百分比',saveAllocation:'保存分摊比例',allocationInvalidPercent:'自定义比例总和必须为 100%。',allocationZeroWeight:'无法按重量分摊：当前货品未填写重量。',allocationZeroVolume:'无法按体积分摊：当前货品未填写体积。',allocationZeroValue:'无法按货值分摊：当前货品未填写货值。',selectedQuoteUnavailable:'已选报价尚未确认或金额不完整；请检查报价。',landedUnavailable:'成本暂无法计算，请检查路线、报价、汇率与分摊数据。',totalLanded:'当前方案到仓成本',extraRatio:'物流与税费 / 货值'});
   Object.assign(dict.ja,{landedIntl:'国際輸送按分',landedInsurance:'保険料按分',landedCustomsValue:'推定課税価格',landedConsumption:'消費税',landedDomestic:'国内輸送',landedSource:'輸送費用の出所',allocationBasis:'運賃按分方法',allocationCurrent:'現在の按分方法',basis_weight:'重量按分',basis_volume:'容積按分',basis_value:'商品金額按分',basis_quantity:'数量按分',basis_custom:'割合を指定',saveAllocation:'按分率を保存',allocationInvalidPercent:'指定割合の合計は 100% である必要があります。',allocationZeroWeight:'重量が未入力のため按分できません。',allocationZeroVolume:'容積が未入力のため按分できません。',allocationZeroValue:'商品金額が未入力のため按分できません。',selectedQuoteUnavailable:'選択した見積は未確定か金額が未完成です。',landedUnavailable:'ルート、見積、為替、按分データを確認してください。',totalLanded:'選択プランの倉庫着原価',extraRatio:'物流・税金 / 商品金額'});
   Object.assign(dict.en,{landedIntl:'Allocated international freight',landedInsurance:'Allocated insurance',landedCustomsValue:'Estimated customs value',landedConsumption:'Consumption tax',landedDomestic:'Domestic logistics',landedSource:'Transport cost source',allocationBasis:'Freight allocation basis',allocationCurrent:'Current allocation',basis_weight:'By weight',basis_volume:'By volume',basis_value:'By value',basis_quantity:'By quantity',basis_custom:'Custom percentages',saveAllocation:'Save percentages',allocationInvalidPercent:'Custom percentages must total 100%.',allocationZeroWeight:'Cannot allocate by weight: items have no weight.',allocationZeroVolume:'Cannot allocate by volume: items have no volume.',allocationZeroValue:'Cannot allocate by value: items have no value.',selectedQuoteUnavailable:'Selected quote is unconfirmed or incomplete. Review it.',landedUnavailable:'Cost cannot be calculated. Check route, quote, FX, and allocation data.',totalLanded:'Selected plan landed cost',extraRatio:'Logistics and taxes / goods value'});
-  Object.assign(dict.zh,{sku:'SKU'});Object.assign(dict.ja,{sku:'SKU'});Object.assign(dict.en,{sku:'SKU'});
+  Object.assign(dict.zh,{sku:'SKU'});
+   Object.assign(dict.zh,{batchOverview:'本批概况',batchOverviewHint:'当前批次规模、货值与成本构成',overviewRowsMeta:'个货品条目',overviewPieces:'货品总件数',overviewGoodsValue:'人民币货值',overviewGoodsValueMeta:'当前批次商品货值',overviewWeightVolume:'总重量 / 总体积',overviewWeightVolumeMeta:'按当前货品数量汇总',overviewTaxes:'关税 + 增值税',costRatioTitle:'成本占货值比例',costRatioSubtitle:'物流及税费相对于当前货值的比例',costShare:'占本批货值',costLogistics:'物流成本',costTax:'税费',costRemaining:'剩余货值',costAdditional:'总附加成本',costOverGoods:'附加成本已超过本批货值',costNoGoods:'录入货值后显示成本占比',costDataUnavailable:'补全所选路线费用后显示成本占比'});
+   Object.assign(dict.ja,{batchOverview:'今回の概要',batchOverviewHint:'現在のロット数量、商品金額、費用構成',overviewRowsMeta:'品目',overviewPieces:'商品総数量',overviewGoodsValue:'商品金額（人民元）',overviewGoodsValueMeta:'現在のロットの商品金額',overviewWeightVolume:'総重量 / 総容積',overviewWeightVolumeMeta:'現在の商品数量から集計',overviewTaxes:'関税 + 増値税',costRatioTitle:'商品金額に対する費用割合',costRatioSubtitle:'現在の商品金額に対する輸送費と税金の割合',costShare:'今回の商品金額比',costLogistics:'物流費',costTax:'税金',costRemaining:'残りの商品金額',costAdditional:'追加費用合計',costOverGoods:'追加費用が商品金額を超えています',costNoGoods:'商品金額を入力すると費用割合を表示します',costDataUnavailable:'選択したルート費用を入力すると割合を表示します'});
+   Object.assign(dict.en,{batchOverview:'Batch overview',batchOverviewHint:'Shipment scale, goods value, and cost composition',overviewRowsMeta:'line items',overviewPieces:'Total pieces',overviewGoodsValue:'Goods value in CNY',overviewGoodsValueMeta:'Current batch goods value',overviewWeightVolume:'Total weight / volume',overviewWeightVolumeMeta:'Summed from current item quantities',overviewTaxes:'Duty + VAT',costRatioTitle:'Costs as a share of goods value',costRatioSubtitle:'Logistics and taxes relative to the current goods value',costShare:'of goods value',costLogistics:'Logistics',costTax:'Taxes',costRemaining:'Remaining goods value',costAdditional:'Total additional costs',costOverGoods:'Additional costs exceed this batch value',costNoGoods:'Enter a goods value to see the cost ratio',costDataUnavailable:'Complete the selected route costs to see the ratio'});Object.assign(dict.ja,{sku:'SKU'});Object.assign(dict.en,{sku:'SKU'});
   let lang='zh', seq=0;
   const seedItems=[{name:'保温杯 480ml',sku:'SM-ZB48',qty:24,price:2680,weight:.26,volume:.0019,duty:10,vat:13},{name:'厨房电子秤',sku:'KS-711',qty:12,price:1980,weight:.55,volume:.0032,duty:8,vat:13}];
   const seed={items:seedItems,exchangeRates:{JPY_CNY:{rate:.048,source:'Default',mode:'locked'},USD_CNY:{rate:7.2,source:'Default',mode:'locked'}},declarationSettings:{dutyRate:10,vatRate:13,otherFee:0},selectedRoute:'air'};
@@ -139,15 +249,59 @@
   function tx(k){if(k==='brand')return {zh:'货品物流成本核算',ja:'商品物流コスト計算',en:'Product Logistics Costing'}[lang];return dict[lang][k]||k} function taxFor(x,rate){return calculateTaxes(x,rate,appState.activeBatch.declarationSettings)}
   function routeCost(i,rate){const batch=appState.activeBatch;return calculateRouteCost(i,rate,{routes,items,otherFee:batch.declarationSettings.otherFee,usdRate:n($('#usdRate').value),lang,money,fcl:batch.fcl,exchangeRates:batch.exchangeRates})}
   function renderItems(){const body=$('#itemRows');body.innerHTML='';items.forEach((x,i)=>{const tr=document.createElement('tr');const labels={name:tx('name'),sku:tx('sku'),hsCode:tx('customs_hsCode'),qty:tx('qty'),price:tx('unitJpy'),weight:tx('weight'),volume:tx('volume'),duty:tx('itemDuty'),vat:tx('itemVat')};tr.innerHTML=`<td class="col-text"><input data-k="name" aria-label="${tx('row')} ${i+1} ${tx('itemSuffix')}: ${labels.name}" title="${esc(x.name)}" value="${esc(x.name)}"></td><td class="col-text"><input data-k="sku" aria-label="${tx('row')} ${i+1} ${tx('itemSuffix')}: ${labels.sku}" title="${esc(x.sku)}" value="${esc(x.sku)}"></td><td class="col-text"><input data-k="hsCode" aria-label="${tx('row')} ${i+1} ${tx('itemSuffix')}: ${labels.hsCode}" title="${esc(x.hsCode)}" value="${esc(x.hsCode)}"></td><td class="col-number"><input class="num" data-k="qty" aria-label="${tx('row')} ${i+1} ${tx('itemSuffix')}: ${labels.qty}" type="number" min="0" value="${x.qty}"></td><td class="col-money"><input class="num" data-k="price" aria-label="${tx('row')} ${i+1} ${tx('itemSuffix')}: ${labels.price}" type="number" min="0" value="${x.price}"></td><td class="col-measure"><input class="num" data-k="weight" aria-label="${tx('row')} ${i+1} ${tx('itemSuffix')}: ${labels.weight}" type="number" min="0" step=".001" value="${x.weight}"></td><td class="col-measure"><input class="num" data-k="volume" aria-label="${tx('row')} ${i+1} ${tx('itemSuffix')}: ${labels.volume}" type="number" min="0" step=".0001" value="${x.volume}"></td><td class="col-number"><input class="num" data-k="duty" aria-label="${tx('row')} ${i+1}: ${tx('itemDuty')}" type="number" min="0" step=".01" value="${x.dutyRate??''}"></td><td class="col-number"><input class="num" data-k="vat" aria-label="${tx('row')} ${i+1}: ${tx('itemVat')}" type="number" min="0" step=".01" value="${x.vatRate??''}"></td><td class="col-money declared-jpy"></td><td class="col-money declared-cny"></td><td class="col-action"><button class="remove" type="button" aria-label="${lang==='zh'?'删除':lang==='ja'?'削除':'Delete'} ${esc(x.name||x.sku||`${tx('row')} ${i+1}`)}">${svgIcon('delete')}</button></td>`;tr.querySelectorAll('input').forEach(el=>el.oninput=()=>{items[i][el.dataset.k]=['name','sku','hsCode'].includes(el.dataset.k)?el.value:['duty','vat'].includes(el.dataset.k)&&el.value===''?null:n(el.value);if(['name','sku','hsCode'].includes(el.dataset.k))el.title=el.value;calculate();scheduleBatchSave()});tr.querySelector('.remove').onclick=()=>{items.splice(i,1);renderItems();calculate();scheduleBatchSave()};body.appendChild(tr)});if(!items.length){body.innerHTML=`<tr><td colspan="12" class="empty">${tx('noItems')}</td></tr>`}calculate()}
+  const donutCircumference=2*Math.PI*47;
+  function setDonutArc(id,share,offset=0){const arc=$('#'+id);if(!arc)return;const length=donutCircumference*Math.max(0,Math.min(100,share))/100;arc.setAttribute('stroke-dasharray',`${length} ${donutCircumference}`);arc.setAttribute('stroke-dashoffset',String(-donutCircumference*offset/100))}
+  function formatShare(value){return Number(value).toLocaleString(lang==='en'?'en-US':lang==='ja'?'ja-JP':'zh-CN',{minimumFractionDigits:1,maximumFractionDigits:1})+'%'}
+  function renderCostBreakdown(goodsValueCny,outcome){
+    const chart=$('#donutChart'),status=$('#costDonutStatus'),totals=outcome?.valid?outcome.totals:null;
+    const values=totals?[totals.international,totals.domestic,totals.insurance,totals.other,totals.duty,totals.vat].map(Number):[];
+    const valuesValid=Boolean(totals&&values.every(value=>Number.isFinite(value)&&value>=0));
+    const logistics=valuesValid?values[0]+values[1]+values[2]+values[3]:null;
+    const taxes=valuesValid?values[4]+values[5]:null;
+    const additional=valuesValid?logistics+taxes:null;
+    const goodsValue=Number(goodsValueCny);
+    const hasGoods=Number.isFinite(goodsValue)&&goodsValue>0;
+    const canShow=valuesValid;
+    $('#costLogisticsAmount').textContent=canShow?money(logistics):'—';
+    $('#costTaxAmount').textContent=canShow?money(taxes):'—';
+    $('#costAdditionalAmount').textContent=canShow?money(additional):'—';
+    $('#costLogisticsPct').textContent=canShow&&hasGoods?formatShare(logistics/goodsValue*100):'—';
+    $('#costTaxPct').textContent=canShow&&hasGoods?formatShare(taxes/goodsValue*100):'—';
+    $('#costAdditionalPct').textContent=canShow&&hasGoods?formatShare(additional/goodsValue*100):'—';
+    setDonutArc('donutLogisticsSegment',0);setDonutArc('donutTaxSegment',0);
+    $('#costRemainingRow').hidden=true;
+    if(!hasGoods){chart.dataset.mode='empty';$('#sumRatio').textContent='—';status.textContent=tx('costNoGoods');return}
+    if(!canShow){chart.dataset.mode='unavailable';$('#sumRatio').textContent='—';status.textContent=tx('costDataUnavailable');return}
+    const additionalShare=additional/goodsValue*100,overValue=additionalShare>100;
+    $('#sumRatio').textContent=formatShare(additionalShare);
+    if(overValue){
+      chart.dataset.mode='over-value';
+      const compositionTotal=additional||1;
+      const logisticsArc=logistics/compositionTotal*100;
+      setDonutArc('donutLogisticsSegment',logisticsArc);
+      setDonutArc('donutTaxSegment',taxes/compositionTotal*100,logisticsArc);
+      status.textContent=tx('costOverGoods');
+    }else{
+      chart.dataset.mode='within-value';
+      const logisticsShare=logistics/goodsValue*100;
+      setDonutArc('donutLogisticsSegment',logisticsShare);
+      setDonutArc('donutTaxSegment',taxes/goodsValue*100,logisticsShare);
+      $('#costRemainingRow').hidden=false;
+      $('#costRemainingPct').textContent=formatShare(Math.max(0,100-additionalShare));
+      status.textContent='';
+    }
+  }
   function calculate(){
     const batch=appState.activeBatch,rate=n($('#fxRate').value);
-    $('#sumItemCount').textContent=String(items.length);$('#sumQty').textContent=String(items.reduce((total,item)=>total+n(item.qty),0));
+    const itemCount=items.length,itemQty=items.reduce((total,item)=>total+n(item.qty),0);
+    $('#sumItemCount').textContent=String(itemCount);$('#overviewContextRows').textContent=String(itemCount);$('#itemsHeaderRows').textContent=String(itemCount);$('#itemsHeaderQty').textContent=String(itemQty);$('#sumQty').textContent=String(itemQty);
     let jpy=0,cny=0,duty=0,vat=0;
     items.forEach((item,index)=>{jpy+=item.qty*item.price;const tax=taxFor(item,rate);cny+=tax.goods;duty+=tax.duty;vat+=tax.vat??0;const j=$$('#itemRows .declared-jpy')[index],c=$$('#itemRows .declared-cny')[index];if(j)j.textContent='¥'+(item.qty*item.price).toLocaleString();if(c)c.textContent=money(tax.goods)});
     const air=routeCost(0,rate),selected=routes.findIndex(route=>route.type===batch.selectedRoute),reference=selected>=0?routeCost(selected,rate):null;
     const outcome=calculateLandedCost({batch,reference});
-    const ratio=outcome.valid&&cny?(outcome.totals.total-cny)/cny*100:null;
-    $('#sumJpy').textContent='¥'+jpy.toLocaleString();$('#sumCny').textContent=money(cny);$('#sumWeight').textContent=`${air.weight.toFixed(2)} kg`;$('#sumVolume').textContent=`${air.cbm.toFixed(3)} m³`;$('#sumDuty').textContent=outcome.valid?money(outcome.totals.duty):money(duty);$('#sumVat').textContent=outcome.valid?money(outcome.totals.vat):money(vat);$('#sumLanded').textContent=outcome.valid?money(outcome.totals.total):'—';$('#sumRatio').textContent=ratio==null?'—':ratio.toFixed(1)+'%';$('#ratioBar').style.width=ratio==null?'0%':Math.min(100,Math.max(0,ratio))+'%';
+    const dutyAmount=outcome.valid?outcome.totals.duty:duty,vatAmount=outcome.valid?outcome.totals.vat:vat;
+    $('#sumJpy').textContent='¥'+jpy.toLocaleString();$('#sumCny').textContent=money(cny);$('#sumWeight').innerHTML=`${air.weight.toFixed(2)} <small>kg</small>`;$('#sumVolume').innerHTML=`${air.cbm.toFixed(3)} <small>m³</small>`;$('#sumDuty').textContent=money(dutyAmount);$('#sumVat').textContent=money(vatAmount);$('#sumTax').textContent=money(dutyAmount+vatAmount);$('#sumLanded').textContent=outcome.valid?money(outcome.totals.total):'—';
+    renderCostBreakdown(cny,outcome);
     renderRoutes({cny,duty,vat},rate);renderLanded(rate);quoteManager?.renderComparison();
   }
   function renderRoutes(sum,rate){
@@ -227,4 +381,3 @@
   window.addEventListener('load',()=>{items=appState.activeBatch.items;$('#fxRate').value=Number(appState.activeBatch.exchangeRates.JPY_CNY.rate).toFixed(4);$('#usdRate').value=Number(appState.activeBatch.exchangeRates.USD_CNY.rate).toFixed(4);$('#dutyRate').value=appState.activeBatch.declarationSettings.dutyRate;$('#vatRate').value=appState.activeBatch.declarationSettings.vatRate;$('#otherFee').value=appState.activeBatch.declarationSettings.otherFee;if(persistenceError){$('#batchSaveStatus').textContent=tx('batchSaveUnavailable');$('#batchSaveStatus').dataset.state='error'}activeLandedRoute=routes.findIndex(route=>route.type===appState.activeBatch.selectedRoute);setLang(lang);batchManager.render();renderItems();refreshFx();refreshFxUsd()});
 </script>
 </body></html>
-

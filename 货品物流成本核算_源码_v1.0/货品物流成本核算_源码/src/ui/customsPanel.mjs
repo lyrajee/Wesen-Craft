@@ -15,13 +15,13 @@ export function mountCustomsPanel({state,tx,onApply}) {
   const fieldHtml=(key,type)=>`<div class="field"><label for="customs-${key}">${esc(tx(`customs_${key}`))}</label><input id="customs-${key}" name="${key}" type="${type}"${type==='number'?' step="any" min="0"':''} value="${esc(result?.[key] ?? '')}"></div>`;
   function render() {
     const batch=state.activeBatch;
-    root.innerHTML=`<div class="p1-toolbar"><div class="field p1-query"><label for="customs-query">${esc(tx('customsQueryLabel'))}</label><input id="customs-query" placeholder="${esc(tx('customsQueryPlaceholder'))}"></div><button id="customs-search" class="btn primary" type="button">${esc(tx('customsSearch'))}</button></div>
+    root.innerHTML=`<div class="customs-layout"><section class="customs-search"><div class="p1-toolbar"><div class="field p1-query"><label for="customs-query">${esc(tx('customsQueryLabel'))}</label><input id="customs-query" placeholder="${esc(tx('customsQueryPlaceholder'))}"></div><button id="customs-search" class="btn primary" type="button">${esc(tx('customsSearch'))}</button></div>
       <p class="hint">${esc(tx('customsOrigin'))}: ${esc(batch.originCountry)} · ${esc(tx('customsDestination'))}: ${esc(batch.destinationCountry)}</p>
-      <p id="customs-notice" class="uploadnote show" role="status" aria-live="polite">${esc(tx(noticeKey))}</p>
-      <div class="section-head"><div><h2>${esc(tx('customsManualTitle'))}</h2><div class="hint">${esc(tx('customsManualHint'))}</div></div></div>
+      <p id="customs-notice" class="uploadnote show" role="status" aria-live="polite">${esc(tx(noticeKey))}</p></section>
+      <section class="customs-detail"><div class="section-head"><div><h2>${esc(tx('customsManualTitle'))}</h2><div class="hint">${esc(tx('customsManualHint'))}</div></div></div>
       <form id="customs-form" class="p1-grid">${fields.map(([key,type])=>fieldHtml(key,type)).join('')}
         <div class="field"><label for="customs-item">${esc(tx('customsApplyTarget'))}</label><select id="customs-item" required><option value="">${esc(tx('customsSelectItem'))}</option>${batch.items.map(item=>`<option value="${esc(item.id)}">${esc(item.name||item.hsCode||item.id)}</option>`).join('')}</select></div>
-        <div class="p1-actions"><button class="btn primary" type="submit">${esc(tx('customsApply'))}</button></div></form>`;
+        <div class="p1-actions"><button class="btn primary" type="submit">${esc(tx('customsApply'))}</button></div></form></section></div>`;
     root.querySelector('#customs-search').onclick=search;
     root.querySelector('#customs-form').onsubmit=apply;
   }

@@ -1,21 +1,78 @@
 # Wesen Craft — Product UI Direction
 
-Operational logistics and landed-cost application. Treat `design/DESIGN-DNA.json` as the machine-readable specification and `design/DESIGN.md` as its human-readable explanation. This is a refinement of the existing interface; preserve all product behavior and business rules.
+Wesen Craft is an Operate-style import logistics cost and purchasing decision workspace. UI 2.1 keeps the quiet warm-neutral identity while adding a restrained brand accent and real wide-desktop composition.
 
-## Approved visual system
+## Visual system
 
-Use warm greige (`#F3F3F0`), white (`#FFFFFF`), near-black (`#1C1C1E`), and neutral grey. The primary hover/pressed colors are `#343436` and `#0E0E0F`. Quiet/selected/hover surfaces are `#FAFAF9`, `#E7E7E4`, `#EEEEEB`, and `#F7F7F5`. Borders are `#E6E6E3` and `#D2D2CE`; muted text is `#686966`. Focus uses `#777873` and `rgba(28, 28, 30, 0.14)`. These values are explicitly user-selected, not reference-image measurements.
+Use a neutral foundation with restrained Wesen Ink Blue:
 
-Routine interactions are neutral monochrome. Semantic colors are reserved for actual success, warning, or error status. Do not reproduce bright-blue boxes or red handwritten numbers in supplied screenshot captures; those are annotations, not product UI.
+| Role | Token | Value |
+| --- | --- | --- |
+| Canvas | `--canvas` | `#F7F7F4` |
+| Work surface | `--surface` | `#FFFFFF` |
+| Quiet surface | `--surface-quiet` | `#FAFAF9` |
+| Primary text/action | `--ink` | `#1C1C1E` |
+| Secondary text | `--secondary-text` | `#41423F` |
+| Muted text | `--muted` | `#686966` |
+| Border | `--line` | `#E6E6E3` |
+| Strong border | `--line-strong` | `#D2D2CE` |
+| Wesen Accent | `--accent` | `#456B8A` |
+| Accent hover | `--accent-hover` | `#385B77` |
+| Accent soft | `--accent-soft` | `#EEF3F6` |
+| Accent soft strong | `--accent-soft-strong` | `#E1EAF0` |
+| Accent muted | `--accent-muted` | `#7E9BB1` |
+| Tax chart accent | `--accent-deep` | `#5B7083` |
 
-## Operational hierarchy
+Neutral surfaces and text remain about 90–95% of the interface. Use Ink Blue for active navigation, selected icons/tabs, links, informational emphasis, quiet focus treatment, and logistics chart data. Primary buttons stay near-black. Do not use blue for the page background, primary buttons, broad card fills, or the whole sidebar.
 
-- Near-black solid primary actions; white outlined secondary actions. Import is secondary to Add Item.
-- Warm greige sidebar with a quiet neutral selected surface; no accent-colored icons, rails, borders, glows, or shadows.
-- One calm eight-metric overview card, then the full-width declaration table and compact parameters.
-- At 1280px and 1440px, every declaration column fits without horizontal scrolling. Use proportional fixed columns and one-line headers. Contain scrolling to the table below desktop breakpoints.
-- Keep text columns left aligned and numeric columns right aligned with tabular numerals. Maintain consistent alignment between table headers, values, and editors.
-- Route comparisons use neutral cards and selection; “参考方案” remains a separate neutral badge. Landed-route tabs use a dark underline.
-- Keep text-only page headings, no broad accent washes, flat surfaces, restrained borders/radii, and calm whitespace.
+Green, amber, and red are reserved for real success, warning, and error states, with text or icon cues. Blue is never success.
 
-Preserve calculation formulas, taxes, freight, exchange-rate APIs, route logic, lookup, import/export, persistence, data structures, and established terminology. For responsive, component, and state details, follow the JSON specification.
+## Fluid shell and responsive strategy
+
+The app shell and toolbar use the available workspace with no global 1440/1520px cap. Dense tables may use the full content width. Cap forms, prose, charts, and context panels according to their task. The 4K overview is left aligned and may cap at 2880px; tables may continue across the workspace.
+
+| Viewport | Space strategy |
+| --- | --- |
+| 390px | Stack the four KPI cards, then the donut and cost summary; keep the table’s horizontal scroll local. |
+| 768px | Use a 2×2 KPI group; place the chart below at full width; keep the page from scrolling horizontally. |
+| 1280–1599px | Compact desktop; 24–32px page padding; overview beside the cost chart. |
+| 1440px | Fluid desktop; declaration table uses the available width and keeps numeric columns aligned. |
+| 1600–1919px | Increase usable table width and place related analysis beside its workspace when it helps. |
+| 1920–2559px | Use parallel route/quote context and cost analysis layouts. |
+| 2560–3839px | Show more useful context and table capacity; keep input widths and panels bounded. |
+| 3840px+ | Use the wide operational canvas. Do not center a narrow page or stretch every card and field. |
+
+Component width guidance: forms generally 960–1600px depending on field count; prose 720–900px; comparison panels may grow; tables use 100% of the work area. Inputs remain bounded and related fields stay grouped.
+
+## Page roles
+
+Keep one shared page header, neutral controls, typography, icons, and focus states while composing each task for its own job:
+
+- Declaration: four-part overview above a full-width dense product table.
+- Route comparison: route options alongside selected freight-quote context on wide screens.
+- Freight quotes: quote list and quote detail side by side on ultrawide screens.
+- Landed cost: allocation controls and summary above a full-width item breakdown.
+- Customs: compact search/context beside bounded manual rate details on wide screens.
+- Lookup and tracking: preserve their existing result and shipment workflows while using shared tokens and responsive behavior.
+
+## Batch overview and cost composition
+
+Replace the old eight-metric 4×2 overview with four light KPI cards: total pieces, CNY goods value, total weight/volume, and duty plus VAT. Separate the overview from the operational goods table by 24–32px.
+
+Show an SVG donut and text summary using existing calculated results only:
+
+- Logistics cost = international + domestic + insurance + other from `calculateLandedCost().totals`.
+- Tax cost = duty + VAT from those same totals; consumption tax is excluded from this chart measure.
+- Logistics share = logistics cost / CNY goods value × 100.
+- Tax share = tax cost / CNY goods value × 100.
+- Total additional-cost share = (logistics + tax) / CNY goods value × 100.
+
+Display one decimal place, labels, amounts, and non-color cues. Ink Blue represents logistics; muted slate blue represents tax; pale neutral represents the remaining goods-value baseline. If additional costs exceed 100%, show the actual percentage in the center and use the ring for the internal logistics/tax mix; do not show a remaining-value segment. If goods value is zero, show an empty ring and an em dash without dividing.
+
+## Data, forms, tables, and accessibility
+
+Use one 24×24 rounded-outline SVG icon family. Navigation icons are about 17px, actions 16px, KPI icons 16–18px. Keep tabular numerals for currency, rates, quantities, weight, volume, and percentages. All numeric table values, headers, and editors align right. Tables stay compact (about 42–44px rows) and use sticky headers when helpful.
+
+Forms use responsive 2–4-column groups according to the task, with bounded controls. Text contrast targets WCAG AA; keyboard focus is visible; selected state is also indicated by text, placement, underline, or shape. Donut data has a text legend. Respect reduced-motion preferences.
+
+Preserve all cost formulas, tax/customs rules, FX logic, LCL/FCL and quote behavior, import/export, persistence, schemas, APIs, established terminology, and Chinese/Japanese/English support.

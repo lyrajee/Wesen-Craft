@@ -1,72 +1,102 @@
-# Wesen Craft Design DNA
+# Wesen Craft Design DNA — UI 2.1
 
-The authoritative machine-readable specification is [DESIGN-DNA.json](DESIGN-DNA.json). This precision refinement keeps the existing operational interface and replaces the previous functional-color interactions with a neutral monochrome system. Reference observations remain separate from Wesen-specific rules and chosen values.
+This document explains the authoritative machine-readable rules in [DESIGN-DNA.json](DESIGN-DNA.json). UI 2.1 is a restrained evolution of the existing operational workspace, not a marketing dashboard.
 
-## Direction
+## Product and visual intent
 
-Warm greige, white, near-black, and neutral grey. Keep the product calm, precise, low-noise, and operational. Routine interface states use no decorative accent color. Semantic success, warning, and error colors appear only when communicating a real status.
+**Mode:** Operate.
+**Product:** Import logistics cost calculation and purchasing decisions.
+**Personality:** Quiet, wide, precise, data-led, operational, premium, recognizable.
 
-## User-selected palette
+The interface uses warm greige, white, near-black, and neutral grey for roughly 90–95% of its visual weight. Wesen Ink Blue occupies about 5–10%, only where it improves recognition of navigation, selection, information, or cost data.
 
-These values are selected for Wesen and are **not measurements from the reference screenshot**.
+## Color tokens
 
-| Role | Value |
-| --- | --- |
-| Primary / text | `#1C1C1E` |
-| Primary hover | `#343436` |
-| Primary pressed | `#0E0E0F` |
-| Sidebar | `#F3F3F0` |
-| Quiet surface | `#FAFAF9` |
-| Selected surface | `#E7E7E4` |
-| Hover surface | `#EEEEEB` |
-| Subtle hover | `#F7F7F5` |
-| Border | `#E6E6E3` |
-| Strong border / control boundary | `#D2D2CE` |
-| Muted text | `#686966` |
-| Focus border | `#777873` |
-| Focus ring | `rgba(28, 28, 30, 0.14)` |
-| White | `#FFFFFF` |
+### Neutral
 
-Do not reproduce bright-blue boxes or red handwritten numbers visible in supplied reference captures; those are user annotations, not interface elements.
+- Canvas `#F7F7F4`
+- Surface `#FFFFFF`
+- Quiet surface `#FAFAF9`
+- Border `#E6E6E3`
+- Strong border `#D2D2CE`
+- Primary text/action `#1C1C1E`
+- Secondary text `#41423F`
+- Muted text `#686966`
 
-## Components and hierarchy
+### Brand
 
-- Primary actions use near-black fill, white icon/text, and `#343436` / `#0E0E0F` hover and pressed states.
-- Secondary actions use a white surface and `1px solid #D6D6D2`. Import remains visually subordinate to Add Item; hover uses `#FAFAF9`, pressed uses `#F1F1EE`.
-- Sidebar stays warm greige. Brand-to-navigation spacing is 28–32px; rows are 40–42px with 4–6px gaps, 10–12px horizontal padding, and a 10px icon gap. Active navigation uses `#E7E7E4`, dark text, and neutral dark-grey icons. Hover uses `#EEEEEB`.
-- Use one understated monochrome SVG icon family with a 24×24 viewBox, rounded joins/ends, approximately 1.5–1.75 optical stroke, 17px navigation icons, and 16px action icons.
-- Keep one overview card with eight distinct metrics in a 4×2 desktop grid. Use a white surface, 1px neutral border, 10–12px radius, and optional nearly invisible shadow. Emphasize landed cost through type weight only.
-- At desktop widths of 1200px and above, the declaration table is fixed-layout, full-width, and all columns fit without horizontal scrolling. At narrower widths, scrolling is contained within the table region.
-- Table headers remain on one line. Product and SKU are left aligned; quantities and numeric values are right aligned with tabular numerals. Headers and cells share column alignment. Editable fields stay within their column and use compact neutral focus treatment.
-- Route cards are white with fine neutral borders. Hover is `#FCFCFB` with `#CACAC6` border. Actual route selection uses a darker neutral border, optionally a small near-black dot. The “参考方案” badge uses `#F1F1EE` and `#555652`, remaining distinct from selection.
-- Landed-route tabs use muted defaults and a 2px near-black underline when selected. Links use `#3F403D` and underline on hover.
-- Keep page titles text-only, declaration parameters compact, and import/add actions visible only on the declaration page.
+- Accent `#456B8A`
+- Accent hover `#385B77`
+- Accent soft `#EEF3F6`
+- Accent soft strong `#E1EAF0`
+- Accent muted `#7E9BB1`
+- Tax chart accent `#5B7083`
 
-## Type and effects
+### Semantic
 
-Use the compact operational scale: page title 20–24px, section title 16–18px, panel title 14–16px, body 14px, table body 13px, metadata 12px, and overline 11px. Table headers are 11.5–12px; rows are about 42–44px and headers 38–40px. Use tabular numerals for quantities, currency, weight, volume, percentages, and totals.
+Use green only for real success or a real cost decrease, amber only for a real warning, and red only for an actual error or destructive state. Always pair semantic color with text or an icon. Accent blue is never a success signal.
 
-Surfaces remain flat with 1px separators and restrained radii. No gradients, glass, heavy shadows, colorful KPI cards, decorative charts, colored focus states, or excessive animation. Motion is brief and functional, with reduced-motion support.
+Ink Blue may mark the active sidebar icon and thin indicator, selected tab underline, links, informational details, visible focus, small KPI icon wells, and logistics chart data. Keep selected navigation surfaces neutral and primary buttons near-black. Avoid blue page backgrounds, blue primary buttons, filled blue tabs, broad blue sidebar fills, and blue KPI-card surfaces.
 
-## Responsive and access rules
+## Layout and responsive rules
 
-At desktop widths of 1280px and 1440px, the full declaration table must fit without local or page-level horizontal scrolling. At tablet/mobile, local table scrolling is allowed, but the page itself must not overflow horizontally. Preserve all four navigation destinations, Chinese/Japanese/English, keyboard-operable tabs, visible neutral focus, accessible names, and usable touch targets.
+There is no global application max-width. The workspace and dense tables use the available width. Each component sets its own useful limit; at 4K the overview can cap at 2880px while remaining left aligned, and dense tables may fill the workspace.
 
-## Wesen Adaptation Rules
+- **390px:** four KPI cards stack vertically; donut and text summary follow; local table scrolling only.
+- **768px:** KPI cards are 2×2; donut moves to a full-width row beneath.
+- **1280–1599px:** compact desktop with 24–32px page padding.
+- **1440px:** fluid workspace and declaration table.
+- **1600–1919px:** wider tables and adjacent analysis where the page task benefits.
+- **1920–2559px:** comparison and context/cost panels use parallel columns.
+- **2560–3839px:** expose more useful context and table capacity; keep forms and side panels bounded.
+- **3840px+:** use a wide operational canvas without a narrow centered page or indiscriminate component stretching.
 
-### Preserve from the reference
+Forms generally stay within 960–1600px depending on field count. Prose stays near 720–900px. Tables use the full available work area. Inputs remain bounded rather than stretching across a 4K screen.
 
-- Warm greige navigation, white work surfaces, near-black typography and primary actions.
-- Compact toolbar, subtle separators, restrained radius, low visual noise, and broad calm whitespace.
-- Compact professional tables with aligned numeric values.
-- Route comparison and cost-breakdown composition.
+## Batch overview
 
-### Adapt for Wesen Craft
+The overview has four light, bordered KPI cards beside a cost-composition panel:
 
-- Use the exact neutral palette above. It is user-selected and is not presented as screenshot-measured.
-- Keep all routine interaction states neutral: no accent-colored navigation, hover, focus, links, buttons, route selection, or tabs.
-- Fit every declaration column at 1280px and 1440px with explicit proportional widths; contain horizontal scrolling below 1200px.
-- Preserve the eight-metric overview, current calculations, business terminology, logistics workflows, responsive behavior, and three-language support.
-- Use an outlined white Import action and near-black Add Item action, both only on declaration.
-- Distinguish the neutral “参考方案” badge from actual route selection.
-- Treat any bright boxes or handwritten marks in supplied screenshots as user annotations and exclude them from the interface system.
+1. **Total pieces:** `sumQty` from current item quantities; `sumItemCount` is supporting line-item count.
+2. **CNY goods value:** the current goods-value sum already produced by existing item calculations.
+3. **Total weight and volume:** the existing current-batch route context totals.
+4. **Duty plus VAT:** existing landed-cost totals when valid, with the current established tax-summary fallback otherwise.
+
+The goods-value number has the strongest KPI type. Units are subdued. The cards use a subtle surface and a small accent-tinted icon well, not a blue fill. Separate this overview from the goods detail table by 24–32px.
+
+## Donut and cost summary
+
+All amounts come from the existing `calculateLandedCost().totals` result; UI code may aggregate returned components but must not add a parallel calculation:
+
+- `logisticsCostCny = international + domestic + insurance + other`
+- `taxCostCny = duty + vat`
+- `logisticsPct = logisticsCostCny / goodsValueCny × 100`
+- `taxPct = taxCostCny / goodsValueCny × 100`
+- `totalAdditionalPct = (logisticsCostCny + taxCostCny) / goodsValueCny × 100`
+
+The chart shows logistics in Ink Blue, taxes in muted slate blue, and remaining goods-value baseline in pale neutral. A text legend and summary list show labels, amounts, and one-decimal percentages. The center shows the actual total additional-cost share.
+
+If the total exceeds 100%, the ring represents the internal logistics-versus-tax composition; the center retains the true percentage and a text notice explains that additional costs exceed goods value. Never invent a remaining segment. If goods value is zero, do not divide: show an empty ring, an em dash, and a concise instruction.
+
+The summary remains a label/value list with fine separators, not another card.
+
+## Page composition
+
+- **Declaration:** overview, then a dense full-width product table.
+- **Routes:** route options and quote context in parallel on wide desktop; FCL editing remains a distinct workspace.
+- **Quotes:** quote list beside its detail editor on ultrawide screens.
+- **Landed cost:** allocation controls and route totals above the full-width cost table.
+- **Customs:** search and origin/destination context beside a bounded manual-rate form on wide screens.
+- **Lookup and tracking:** preserve existing task flows; apply shared accent, typography, spacing, icons, tables, and responsive rules.
+
+## Type, tables, forms, and motion
+
+Use distinct page, section, panel, primary metric, secondary metric, body, table, metadata, and caption levels. Apply `font-variant-numeric: tabular-nums` to all numeric data. Right-align numeric headers, values, and editable fields. Keep rows compact and do not increase row height merely because the screen is wide.
+
+Forms use 2–4 responsive columns where fields are logically related. Bound inputs and prose even when the overall workspace is fluid. Use one coherent 24×24 rounded-outline SVG family, with consistent stroke and optical sizing.
+
+Maintain visible keyboard focus, WCAG AA contrast, labels and values in the donut legend, and touch targets on mobile. Accent is never the only state indicator. Motion remains minimal and nonessential transitions respect `prefers-reduced-motion`.
+
+## Preserve
+
+Do not change cost formulas, customs or tax rules, exchange-rate logic, LCL/FCL calculations, quote logic, import/export behavior, persistence, schemas, APIs, permissions, established terminology, or Chinese/Japanese/English support.

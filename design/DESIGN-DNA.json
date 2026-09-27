@@ -20,11 +20,12 @@
       }
     ],
     "created_at": "2026-09-24",
-    "confidence_notes": "The exact neutral palette values in this refinement were explicitly selected by the user and are not measured from the reference. Reference-observed traits are separately recorded. The supplied reference screenshot includes visible user annotations; these are excluded from the design system."
+    "confidence_notes": "The exact neutral palette values in this refinement were explicitly selected by the user and are not measured from the reference. Reference-observed traits are separately recorded. The supplied reference screenshot includes visible user annotations; these are excluded from the design system.",
+    "design_revision": "2.1"
   },
   "design_system": {
     "color": {
-      "palette_type": "Warm greige, white, near-black, and neutral grey; no decorative accent color",
+      "palette_type": "Neutral 90–95% with restrained Wesen Ink Blue accent for navigation, selection, information, and data",
       "primary": {
         "hex": "#1C1C1E",
         "role": "Near-black primary actions and primary text"
@@ -70,22 +71,82 @@
         "role": "Secondary and metadata text"
       },
       "focus_border": {
-        "hex": "#777873",
-        "role": "Neutral focus border"
+        "hex": "#456B8A",
+        "role": "Visible, restrained focus border"
       },
-      "focus_ring": "rgba(28, 28, 30, 0.14)",
+      "focus_ring": "0 0 0 3px rgba(69, 107, 138, 0.18)",
       "white": {
         "hex": "#FFFFFF",
         "role": "Work surfaces and outlined secondary actions"
       },
       "semantic": {
-        "success": "Use only for actual successful status and pair with text or icon.",
-        "warning": "Use only for actual warning status and pair with text or icon.",
-        "error": "Use only for actual error status and pair with text or icon.",
-        "info": "Neutral grey; use only for actual informational status and pair with text or icon."
+        "success": "Green only for a real successful operation or a real cost decrease, paired with a label or icon.",
+        "warning": "Amber only for a real warning requiring attention, paired with text or an icon.",
+        "error": "Red only for an actual error or destructive state, paired with text or an icon.",
+        "info": "Wesen Ink Blue for actual informational status; never use accent blue as success."
       },
-      "contrast_strategy": "Use near-black text and primary actions on white and warm greige surfaces. Routine navigation, hover, focus, links, tabs, refresh controls, and selection use neutral grey values only. Semantic colors appear only for actual status.",
-      "measurement_status": "All exact values in this revision are explicitly user-selected design values, not measured from the reference screenshot. Reference-observed traits remain in reference_observed; Wesen-specific implementation rules remain in Wesen adaptation fields."
+      "contrast_strategy": "Use near-black text and primary actions on white and warm neutral surfaces. Reserve Ink Blue for navigation, selection, links, information, charts, and quiet focus. Accent is never the only state cue. Meet WCAG AA contrast for text and controls; semantic colors communicate only their actual status.",
+      "measurement_status": "All exact values are user-selected design tokens, not measurements from the reference screenshot.",
+      "neutral": {
+        "canvas": {
+          "hex": "#F7F7F4",
+          "role": "Warm off-white application canvas"
+        },
+        "surface": {
+          "hex": "#FFFFFF",
+          "role": "Primary work surface"
+        },
+        "quiet_surface": {
+          "hex": "#FAFAF9",
+          "role": "Quiet neutral surface"
+        },
+        "border": {
+          "hex": "#E6E6E3",
+          "role": "Hairline borders and separators"
+        },
+        "strong_border": {
+          "hex": "#D2D2CE",
+          "role": "Control boundary"
+        },
+        "primary_text": {
+          "hex": "#1C1C1E",
+          "role": "Primary text and primary action"
+        },
+        "secondary_text": {
+          "hex": "#41423F",
+          "role": "Secondary body text"
+        },
+        "muted_text": {
+          "hex": "#686966",
+          "role": "Metadata and supporting labels"
+        }
+      },
+      "brand": {
+        "accent": {
+          "hex": "#456B8A",
+          "role": "Selected navigation, active icon, selected tab, links, chart logistics segment, and informational emphasis"
+        },
+        "accent_hover": {
+          "hex": "#385B77",
+          "role": "Accent hover and active link"
+        },
+        "accent_soft": {
+          "hex": "#EEF3F6",
+          "role": "Small icon and selected-state surface"
+        },
+        "accent_soft_strong": {
+          "hex": "#E1EAF0",
+          "role": "Stronger selected-state surface"
+        },
+        "accent_muted": {
+          "hex": "#7E9BB1",
+          "role": "Restrained focus and supporting chart accent"
+        },
+        "accent_deep": {
+          "hex": "#5B7083",
+          "role": "Tax chart segment"
+        }
+      }
     },
     "typography": {
       "type_scale": {
@@ -144,6 +205,29 @@
           "line_height": 1.3,
           "tracking": "0.06em",
           "role": "Overline"
+        },
+        "primary_metric": {
+          "size": "20–23px",
+          "weight": 650,
+          "line_height": 1.25,
+          "role": "Primary batch KPI value"
+        },
+        "secondary_metric": {
+          "size": "14–19px",
+          "weight": 600,
+          "line_height": 1.3,
+          "role": "Supporting amount and measurement"
+        },
+        "unit": {
+          "size": "11–12px",
+          "weight": 450,
+          "line_height": 1.3,
+          "role": "Muted measurement unit"
+        },
+        "data": {
+          "font_variant_numeric": "tabular-nums",
+          "text_alignment": "right",
+          "role": "Currency, rates, quantity, weight, volume, and percentages"
         }
       },
       "font_families": {
@@ -172,17 +256,20 @@
     },
     "layout": {
       "grid_system": "12-column desktop grid with aligned content edges; wide canvas and two-column lower analysis area",
-      "max_content_width": "Fluid desktop width: approximately 1180–1440px; allow up to approximately 1520px for dense operational tables. Do not hard-cap the application at 1200px.",
-      "columns": "Fluid 12-column desktop grid; use up to approximately 1520px for dense tables. Lower comparison region uses a wider route panel and narrower cost summary.",
+      "max_content_width": "No global application max-width. The workspace and dense tables are fluid. Cap individual components by their task; the overview is capped at 2880px on 4K and remains left aligned.",
+      "columns": "12-column operational canvas. Preserve full-width dense tables; place genuinely related analysis, comparison, or context in adjacent columns on large and wide desktop.",
       "gutter": "24px between major columns; 16–20px internal panel padding; 8–12px control gaps. Reduce gutters at narrower breakpoints while maintaining table readability.",
       "breakpoints": {
-        "mobile": "<640px: compact header and navigation; local table scrolling; no page-level horizontal overflow",
-        "tablet": "640–1199px: compact layout; local declaration table scrolling is allowed",
-        "desktop": ">=1200px: fluid full-width work area; all declaration columns visible without horizontal scrolling",
-        "wide": "Allow content to grow for operational tables; do not introduce a narrow hard cap"
+        "mobile": "<=620px: single-column KPI cards, chart and summary below, compact navigation, local table scrolling, no page-level horizontal overflow.",
+        "tablet": "621–1199px: 2×2 KPI group followed by a full-width chart; local table scrolling; no page-level horizontal overflow.",
+        "desktop": "1200–1599px: fluid work area, overview and chart side by side, 24–32px page padding.",
+        "large_desktop": "1600–1919px: more horizontal breathing room and wider tables.",
+        "wide_desktop": "1920–2559px: comparison and cost/context panels side by side.",
+        "ultrawide": "2560–3839px: parallel work areas, bounded forms and panels, dense full-width tables.",
+        "four_k": ">=3840px: fluid operational canvas with component-specific caps and more simultaneous information."
       },
       "alignment_tendency": "Strict grid alignment with fluid content width and broad calm whitespace; local asymmetry in route comparison and cost summary.",
-      "table": "Declaration table is width:100% and table-layout:fixed with explicit proportional columns at desktop. At viewports >=1200px set min-width:0 and show every column without horizontal scrolling. Only tablet/mobile may scroll locally.",
+      "table": "Full-width, compact rows with sticky header and optional sticky first column. All numeric headers, values, and editors are right aligned with tabular numerals. Local horizontal scrolling is allowed below 1200px; the page itself must not overflow. Row height stays about 42–44px at wide sizes.",
       "table_columns": {
         "品名": "19%",
         "sku_hs": "11%",
@@ -193,6 +280,21 @@
         "申报价值_JPY": "14%",
         "申报价值_CNY": "15%",
         "actions": "5%"
+      },
+      "component_widths": {
+        "form": "960–1600px according to field count; inputs remain bounded and related fields stay grouped.",
+        "prose": "720–900px.",
+        "table": "100% of the available workspace; contain horizontal scrolling locally below 1200px.",
+        "comparison": "Fluid multi-column layout with readable minimum widths.",
+        "dashboard": "12-column grid with four KPI cards in a 2×2 group beside the cost composition panel.",
+        "search_result": "Search and controls stay compact; results use available table or comparison width."
+      },
+      "wide_screen_strategy": {
+        "1280–1599": "Standard desktop, 24–32px page padding; summary and chart side by side; compact operational tables.",
+        "1600–1919": "Large desktop, wider page padding, more table capacity, and adjacent analysis when content benefits.",
+        "1920–2559": "Wide desktop, comparison plus context and cost analysis in parallel columns.",
+        "2560–3839": "Ultrawide, add useful context and table capacity; bound forms and supporting panels.",
+        "3840+": "Use the operational canvas broadly. Do not center a narrow page or stretch every component; the batch overview may use up to 2880px and dense tables can fill the workspace."
       }
     },
     "shape": {
@@ -215,7 +317,7 @@
       "depth_cues": "Surface tone and hairline borders do most separation work; do not stack multiple shadows."
     },
     "iconography": {
-      "style": "One coherent family of understated outline SVG symbols: neutral monochrome, consistent 24×24 viewBox, rounded joins/ends, approximately 1.5–1.75 optical stroke, 17px navigation and 16px operation size. No colored states or decorative containers.",
+      "style": "One coherent 24×24 outline SVG family with rounded joins and ends and 1.5–1.75 optical stroke. Navigation is about 17px, operational icons 16px, KPI icons 16–18px. Neutral at rest; Ink Blue for active navigation and selected/informational states. No emoji.",
       "stroke_weight": "1.5–1.75 optical stroke",
       "size_scale": "17px navigation; 16px operation; optical correction allowed without changing family or viewBox",
       "preferred_set": "Use the existing product icon set if established; otherwise choose a consistent outline set such as Lucide. Avoid branded/custom Maison Margiela marks."
@@ -229,33 +331,42 @@
       },
       "entrance_pattern": "No prominent entrance animation observed; panels should appear without choreography, with optional short opacity transition for overlays.",
       "exit_pattern": "Short opacity/position transition for dismissible overlays only.",
-      "philosophy": "Minimal functional; motion confirms state changes and preserves orientation, with reduced-motion support."
+      "philosophy": "Minimal and functional. Motion confirms state changes; reduced-motion preserves state and hierarchy while removing nonessential animation."
     },
     "components": {
       "button_style": "Primary actions use #1C1C1E fill with white label/icon; hover #343436; pressed #0E0E0F. Secondary actions use a white surface, 1px #D6D6D2 outline, near-black label, and neutral #FAFAF9 hover / #F1F1EE pressed. Import is outlined and visually subordinate to Add Item. Buttons are 36–38px high with approximately 8px radius and accessible focus, disabled, and loading states.",
-      "input_style": "White surface, 1px #D2D2CE boundary, 6–8px radius, compact consistent control height, neutral #777873 focus border and rgba(28, 28, 30, 0.14) focus ring. Labels remain visible; semantic errors are reserved for actual errors.",
-      "card_style": "White flat panel with 1px #E6E6E3 outline, 10–12px radius, 16–20px padding; avoid excessive shadow.",
-      "navigation_pattern": "Responsive desktop left rail approximately 216–240px wide with #F3F3F0 fill. Brand-to-nav 28–32px; rows 40–42px; row gap 4–6px; horizontal padding 10–12px; icon-text gap 10px. Normal text #41423F and icon #676864; hover uses #EEEEEB with #1C1C1E/#4F504D; active uses #E7E7E4, #1C1C1E text, #4F504D icon, 5–6px radius. No rail, colored border, glow, or shadow.",
+      "input_style": "White surface, 1px neutral border, 6–8px radius, compact height, visible label, restrained Ink Blue focus border and translucent focus ring. Keep wide-screen inputs bounded to their task rather than stretching them across the canvas.",
+      "card_style": "Operational cards use white or very subtle neutral surfaces, 1px border, 10–12px radius, 16–20px padding, and no heavy shadow. Card surfaces are reserved for the overview and focused context; operational details prefer sections, tables, and dividers.",
+      "navigation_pattern": "Warm greige sidebar. Neutral icons and labels by default; selected row keeps a neutral surface, near-black label, Ink Blue icon, and a 2px Ink Blue indicator. Hover remains neutral. Never use a blue sidebar or filled blue navigation item.",
       "modal_style": "Not shown; infer a simple white dialog with neutral border, 12px radius, restrained shadow, clear title/actions and no glass blur.",
       "list_style": "Compact operational tables with explicit column sizing, 40–44px rows, sticky headers and a sticky first column when useful, explicit units, aligned values, and contained horizontal scrolling on narrow screens.",
       "component_notes": "Toolbar is a compact white strip with a fine neutral separator. FX controls pair currency, editable tabular numerals, neutral refresh action, and independent status feedback. Route cards align amounts and fee rows; actual selection uses a darker neutral border and optional small near-black dot, distinct from the neutral Reference badge. Links use #3F403D and underline on hover. Cost breakdown is a labeled list with right-aligned values and a clear total.",
       "declaration_overview": {
-        "layout": "One white overview card, 4 columns × 2 rows desktop and 2 columns mobile, 1px neutral border, 10–12px radius, optional 0 1px 3px rgba(28,28,30,.04) shadow",
+        "layout": "Overview heading followed by a 2×2 group of four light KPI cards on the left (58–62%) and a cost composition panel on the right (38–42%). At 768–1199px, KPI cards stay 2×2 and chart moves below. At 390px, cards stack vertically before the chart. Separate goods detail by 24–32px.",
         "metrics": [
-          "item rows / piece count",
-          "goods value JPY",
-          "goods value CNY",
-          "total weight",
-          "total volume",
-          "duty",
-          "VAT",
-          "air landed cost"
+          {
+            "label": "Total pieces",
+            "source": "sumQty from current batch item quantities",
+            "support": "sumItemCount record count"
+          },
+          {
+            "label": "CNY goods value",
+            "source": "current declared CNY sum using existing item tax/value result"
+          },
+          {
+            "label": "Weight and volume",
+            "source": "selected route result context; total batch weight and CBM"
+          },
+          {
+            "label": "Duty and VAT",
+            "source": "existing calculateLandedCost totals when valid; existing tax summary fallback otherwise"
+          }
         ],
-        "hierarchy": "Keep weight and volume separate, duty and VAT separate. Give landed-cost total slightly stronger emphasis and keep current ratio below it. This is a Wesen-specific adaptation, not a screenshot observation."
+        "visual": "White or extremely subtle neutral cards, 1px border, 10–12px radius, 16–20px padding, no heavy shadow. Accent may tint the small icon well only. CNY value has the strongest type hierarchy."
       },
-      "iconography": "One understated, coherent SVG family with neutral monochrome strokes, 24×24 viewBox, rounded joins/ends, approximately 1.5–1.75 optical stroke, 17px navigation icons, and 16px action icons. No colored icon states or decorative containers.",
+      "iconography": "Use the same 24×24 outline SVG family for navigation, buttons, KPI, filters, tables, and logistics surfaces. Rounded joins/ends, consistent 1.5–1.75 stroke, 16–18px optical size. Active and selected states may use Ink Blue; neutral remains the default.",
       "route_selection": "Default white with neutral thin border; hover #FCFCFB and #CACAC6 border; actual selection uses #777873 border and optionally a small near-black dot. Reference badge uses #F1F1EE with #555652. These states must remain visually distinct.",
-      "landed_tabs": "Muted grey default; near-black text on hover; selected near-black text with 2px near-black underline.",
+      "landed_tabs": "Muted default tabs and near-black text; the selected tab uses a 2px Ink Blue underline. Never fill the tab with blue.",
       "exchange_controls": "Refresh control has 30–32px desktop visual size, transparent or white default, neutral icon, #EEEEEB hover, #E3E3E0 pressed, and neutral dark focus ring. On touch layouts preserve an accessible hit area.",
       "declaration_table": {
         "desktop": "At >=1200px width:100%, table-layout:fixed, min-width:0; all columns visible at 1280px and 1440px without horizontal scrolling.",
@@ -275,7 +386,22 @@
         "alignment": "Product name and SKU left aligned. All quantity, prices, weights, volumes, declared amounts and actions align consistently with their headers; numeric content is right aligned with tabular numerals.",
         "row_height": "42–44px; header 38–40px; horizontal cell padding 8–10px.",
         "inputs": "Same family and font as surrounding cells; compact padding, transparent resting border/background, #FAFAF9 hover, white focus with #AFAFAC border and neutral focus ring. Inputs width:100%, min-width:0; product names remain in their column."
-      }
+      },
+      "cost_composition_donut": {
+        "title": "Costs as a share of goods value",
+        "logistics_cost_cny": "Sum existing international, domestic, insurance, and other logistics charge totals from calculateLandedCost.totals; do not create a second freight calculation.",
+        "tax_cost_cny": "Existing duty plus VAT from calculateLandedCost.totals; do not include consumption tax in this chart measure.",
+        "percentages": {
+          "logistics": "logisticsCostCny / goodsValueCny × 100",
+          "taxes": "taxCostCny / goodsValueCny × 100",
+          "total_additional": "(logisticsCostCny + taxCostCny) / goodsValueCny × 100"
+        },
+        "presentation": "One-decimal percentages, text legend with labels and values. Logistics uses Ink Blue, taxes use muted slate blue, and the remaining goods-value baseline uses pale neutral. The central label displays the actual total additional-cost percentage.",
+        "over_100": "If total additional costs exceed goods value, the ring shows the internal logistics-versus-tax composition, the center keeps the actual percentage above 100%, and a text notice explains the condition. Do not show a fabricated remaining-value segment.",
+        "zero_value": "When goodsValueCny is zero, do not divide. Show an empty ring, an em dash, and a short instruction to enter goods value."
+      },
+      "links": "Ink Blue for links, darker accent and underline on hover. Primary action remains near-black.",
+      "focus_style": "Clear 2px focus indicator using restrained Ink Blue. Focus must remain visible and must not rely on color alone."
     }
   },
   "design_style": {
@@ -306,16 +432,16 @@
     "visual_language": {
       "complexity": "minimal",
       "ornamentation": "None; hierarchy uses typographic weight, neutral surface contrast, spacing, and thin rules.",
-      "whitespace_usage": "Large calm whitespace around central task groups; tighter spacing within navigation, tables, and cost rows.",
-      "visual_weight_distribution": "Small left navigation rail, compact top toolbar, centered content; table is the first major information block, with route and cost panels below.",
-      "focal_strategy": "Distributed interest guided by strong task hierarchy: current shipment, route decision, total cost/action.",
+      "whitespace_usage": "Use generous separation between workflow phases, compact spacing within tables and control groups, and deliberate page-specific composition. The canvas is fluid; do not create blank side gutters by centering a narrow page.",
+      "visual_weight_distribution": "Warm greige left navigation, full-width fluid workspace, compact page header, four-metric overview with a cost-composition panel, then a dense table and task-specific analysis.",
+      "focal_strategy": "Current batch value, freight/tax composition, route decision, and landed-cost action lead according to the active page.",
       "contrast_level": "Moderate, with high contrast reserved for primary text and actions",
       "texture_usage": "No visible texture; flat matte surfaces"
     },
     "composition": {
       "hierarchy_method": "Typographic hierarchy, spacing, hairline separators, near-black primary actions, and neutral interaction cues.",
       "balance_type": "Asymmetric",
-      "flow_direction": "Top toolbar to manifest/table, then down to side-by-side route comparison and cost summary",
+      "flow_direction": "Page header to task-specific overview/workspace; comparisons and cost context move alongside their related content at wide sizes; dense records use the available width.",
       "grouping_strategy": "Thin borders and whitespace group related records; section headings sit outside and above their panels.",
       "negative_space_role": "Separates workflow phases and protects scanability. Preserve broad whitespace around task groups while keeping table rows dense enough for operations."
     },
@@ -507,9 +633,12 @@
     "No heavy shadows.",
     "No excessive animation or motion that competes with data.",
     "No colorful multi-card KPI system.",
-    "No green success color for an ordinary successful exchange-rate refresh.",
-    "No decorative accent color in ordinary UI states.",
-    "Do not reproduce bright-blue boxes or red handwritten numbers from reference screenshots; they are user annotations, not interface elements."
+    "Do not reproduce bright-blue boxes or red handwritten numbers from reference screenshots; they are user annotations, not interface elements.",
+    "No blue primary actions, broad blue surfaces, or blue-filled navigation.",
+    "No decorative success/warning/error colors; semantic colors communicate actual state only.",
+    "No global narrow max-width that leaves wide operational screens unused.",
+    "No eight-metric 4×2 batch overview; use the four-metric overview and real cost composition.",
+    "No fabricated remaining segment when the additional-cost ratio exceeds 100%."
   ],
   "reference_observed": {
     "source": "Supplied dashboard screenshot. The screenshot includes handwritten and boxed user annotations in the supplied capture; those annotations are not interface design and must not be reproduced. Reference observations are descriptive only and do not override Wesen-specific selected interaction rules.",
@@ -538,35 +667,40 @@
   "wesen_adaptations": {
     "classification": "Wesen-specific requirements and implementation rules selected for this logistics and landed-cost application; not claims about the reference screenshot.",
     "rules": [
-      "Use Wesen identity, established terminology, workflows, and permissions.",
-      "Use fluid desktop content width approximately 1180–1440px; extend to approximately 1520px for dense operational tables.",
-      "Treat desktop sidebar width as responsive in the range approximately 216–240px.",
-      "Prioritize shipment, route, carrier, customs, currency, fee, and calculation data relevant to actual Wesen workflows.",
-      "Use compact readable tables with aligned numeric values and explicit currency/unit context.",
-      "Show cost components and assumptions clearly and make landed-cost totals easy to locate.",
-      "Keep route comparison + cost breakdown composition while adapting its content to real decision criteria.",
-      "Preserve accessibility, responsive behavior, and reduced-motion preferences.",
-      "Use the explicitly user-selected near-black and neutral tokens in this revision; use neutral locally for selection, links, hover, focus, information, and lightweight interaction only, with no broad color wash."
+      "Preserve Wesen identity, established terminology, workflow behavior, calculations, data schema, persistence, and APIs.",
+      "Use a fluid app shell with no global max-width; cap forms and supporting panels at component level.",
+      "Use warm greige, white, near-black, neutral grey, and restrained Ink Blue at roughly 5–10% of visual attention.",
+      "Use compact wide tables with numeric values aligned right and tabular numerals.",
+      "Use the existing calculated landed-cost totals to display logistics, duty, VAT, and cost ratios.",
+      "Use page-specific compositions for declaration, route comparison, freight quotes, landed cost, customs, lookup, and tracking.",
+      "Preserve Chinese, Japanese, and English, keyboard access, WCAG AA contrast, responsive behavior, and reduced-motion preferences."
     ]
   },
   "wesen_adaptation_rules": {
     "preserve": [
-      "Warm greige sidebar (#F3F3F0), white work surfaces, near-black typography and primary actions, neutral grey controls, fluid operational layout, subtle 1px separators, restrained radius, compact tables, broad calm whitespace, route comparison and landed-cost composition.",
-      "Keep the UI flat and low-noise: no gradients, glass, heavy shadows, colored KPI cards, decorative charts, or decorative accent colors.",
-      "Use neutral-only routine interactions: selected navigation #E7E7E4; hover #EEEEEB; near-black selected tabs; white outlined secondary buttons; neutral focus treatment."
+      "Warm greige sidebar, white work surfaces, near-black typography and primary actions, thin neutral separators, restrained radius, compact tables, and low shadow.",
+      "Use Wesen Ink Blue only for active navigation, selected icons/tabs, links, informational emphasis, focus, and cost chart data.",
+      "Keep semantic green, amber, and red for real success, warning, and error states; pair color with a label or icon.",
+      "Keep primary actions near-black. Selected navigation keeps a neutral surface and small blue indicator rather than a filled blue state.",
+      "Avoid gradients, glass, heavy shadows, decorative charts, broad color washes, and card-inside-card stacks."
     ],
     "adapt": [
-      "Use the exact user-selected neutral palette and responsive layout values. These values are not screenshot measurements.",
-      "Fit the full declaration table at desktop 1280px and 1440px using explicit proportional widths; allow contained local horizontal scrolling only below 1200px.",
-      "Use one coherent neutral monochrome 24×24 SVG icon family: approximately 17px navigation, 16px operation icons, rounded 1.5–1.75 optical strokes, no emoji or Unicode icon substitutes.",
-      "Keep one overview card with eight distinct metrics in a 4×2 desktop grid; landed total may use stronger type weight, never color.",
-      "Show import/add actions only on declaration. Use white outlined Import and near-black primary Add Item.",
-      "Use neutral route hover/selection and near-black landed-route tab underline; keep Reference badge distinct from selected state.",
-      "Preserve the established Chinese, Japanese, and English experience, accessibility, responsive behavior, calculations, and business logic."
+      "Use a fluid workspace without a global 1440/1520px cap. Let dense tables use the available width.",
+      "At 1280–1599px use a compact desktop workspace; at 1600–1919px use more table capacity and adjacent analysis when useful.",
+      "At 1920–2559px place genuinely related comparison and cost/context panels side by side; at 2560px and above add parallel information while bounding forms and inputs.",
+      "At 4K keep the overview at or below 2880px and left aligned, while tables may fill the workspace.",
+      "Replace the old eight-metric overview with four KPIs: total pieces, CNY goods value, total weight/volume, and duty plus VAT; show the cost donut and text summary alongside.",
+      "Use existing calculateLandedCost totals for logistics and tax summary. Never alter freight/tax formulas or invent values.",
+      "At tablet, use 2×2 KPIs with chart below; at mobile, stack the four KPI cards before the chart; contain table scrolling locally.",
+      "Keep all values and states accessible by label, keyboard focus, and non-color cues."
     ],
     "avoid": [
-      "Do not reproduce annotation marks from screenshots. No decorative accent color in ordinary UI states.",
-      "No gradients, glass, heavy shadows, colored KPI cards, decorative charts, broad color wash, or excessive animation."
+      "Do not use blue as a primary button fill, page background, sidebar background, or broad card wash.",
+      "Do not use accent blue to represent success; do not use semantic colors decoratively.",
+      "Do not show a fabricated remaining goods-value segment when additional costs exceed 100%.",
+      "Do not divide by zero or display NaN or Infinity in the donut.",
+      "Do not cap every page at 1440/1520px, center a narrow content column on 4K, or stretch inputs and cards without a task reason.",
+      "Do not change calculations, customs/tax rules, FX logic, freight logic, schema, persistence, import/export, or APIs."
     ]
   }
 }
