@@ -1,7 +1,7 @@
 {
   "meta": {
     "name": "Wesen Craft Design DNA",
-    "description": "Neutral operational design system for Wesen Craft: warm greige, white, near-black, and neutral grey. Reference observations are separated from user-selected Wesen adaptations.",
+    "description": "Wesen Craft UI 2.2: warm neutral operational workspace with restrained Wesen Yellow selection and near-black actions.",
     "source_references": [
       {
         "type": "image",
@@ -21,11 +21,11 @@
     ],
     "created_at": "2026-09-24",
     "confidence_notes": "The exact neutral palette values in this refinement were explicitly selected by the user and are not measured from the reference. Reference-observed traits are separately recorded. The supplied reference screenshot includes visible user annotations; these are excluded from the design system.",
-    "design_revision": "2.1"
+    "design_revision": "2.2"
   },
   "design_system": {
     "color": {
-      "palette_type": "Neutral 90–95% with restrained Wesen Ink Blue accent for navigation, selection, information, and data",
+      "palette_type": "Neutral 90–95% with Wesen Yellow 5–10% for identity, selection, and wayfinding",
       "primary": {
         "hex": "#1C1C1E",
         "role": "Near-black primary actions and primary text"
@@ -47,8 +47,8 @@
         "role": "Quiet neutral surface and secondary hover"
       },
       "selected_surface": {
-        "hex": "#E7E7E4",
-        "role": "Neutral selected navigation surface"
+        "hex": "#F9DE53",
+        "role": "Active sidebar selection"
       },
       "hover_surface": {
         "hex": "#EEEEEB",
@@ -71,10 +71,10 @@
         "role": "Secondary and metadata text"
       },
       "focus_border": {
-        "hex": "#456B8A",
-        "role": "Visible, restrained focus border"
+        "hex": "#1C1C1E",
+        "role": "2px visible near-black focus outline"
       },
-      "focus_ring": "0 0 0 3px rgba(69, 107, 138, 0.18)",
+      "focus_ring": "0 0 0 3px rgba(249, 222, 83, 0.45)",
       "white": {
         "hex": "#FFFFFF",
         "role": "Work surfaces and outlined secondary actions"
@@ -83,9 +83,9 @@
         "success": "Green only for a real successful operation or a real cost decrease, paired with a label or icon.",
         "warning": "Amber only for a real warning requiring attention, paired with text or an icon.",
         "error": "Red only for an actual error or destructive state, paired with text or an icon.",
-        "info": "Wesen Ink Blue for actual informational status; never use accent blue as success."
+        "info": "Wesen Yellow for actual informational status; never use yellow as success."
       },
-      "contrast_strategy": "Use near-black text and primary actions on white and warm neutral surfaces. Reserve Ink Blue for navigation, selection, links, information, charts, and quiet focus. Accent is never the only state cue. Meet WCAG AA contrast for text and controls; semantic colors communicate only their actual status.",
+      "contrast_strategy": "Near-black text and white primary-action labels; yellow backgrounds use near-black text. Yellow never carries ordinary text or status by color alone. Focus pairs near-black outline with yellow halo.",
       "measurement_status": "All exact values are user-selected design tokens, not measurements from the reference screenshot.",
       "neutral": {
         "canvas": {
@@ -123,29 +123,39 @@
       },
       "brand": {
         "accent": {
-          "hex": "#456B8A",
-          "role": "Selected navigation, active icon, selected tab, links, chart logistics segment, and informational emphasis"
+          "hex": "#F9DE53",
+          "role": "Identity, selected navigation, logistics chart segment, and wayfinding"
         },
         "accent_hover": {
-          "hex": "#385B77",
-          "role": "Accent hover and active link"
+          "hex": "#F2D447",
+          "role": "Hover state of yellow selection"
         },
         "accent_soft": {
-          "hex": "#EEF3F6",
-          "role": "Small icon and selected-state surface"
+          "hex": "#FFF9DD",
+          "role": "Quiet yellow hover surface"
         },
         "accent_soft_strong": {
-          "hex": "#E1EAF0",
-          "role": "Stronger selected-state surface"
+          "hex": "#FCEB95",
+          "role": "Restrained selected-state tint"
         },
         "accent_muted": {
-          "hex": "#7E9BB1",
-          "role": "Restrained focus and supporting chart accent"
+          "hex": "#A88C18",
+          "role": "Supporting yellow border; not ordinary body text"
         },
-        "accent_deep": {
-          "hex": "#5B7083",
-          "role": "Tax chart segment"
+        "accent_pressed": {
+          "hex": "#E7C83C",
+          "role": "Pressed selection"
+        },
+        "accent_dark": {
+          "hex": "#7D6814",
+          "role": "KPI icon stroke and accessible accent detail"
         }
+      },
+      "chart": {
+        "logistics": "#F9DE53",
+        "tax": "#3F3F3B",
+        "remaining": "#ECECE8",
+        "track": "#F2F2EE"
       }
     },
     "typography": {
@@ -260,11 +270,11 @@
       "columns": "12-column operational canvas. Preserve full-width dense tables; place genuinely related analysis, comparison, or context in adjacent columns on large and wide desktop.",
       "gutter": "24px between major columns; 16–20px internal panel padding; 8–12px control gaps. Reduce gutters at narrower breakpoints while maintaining table readability.",
       "breakpoints": {
-        "mobile": "<=620px: single-column KPI cards, chart and summary below, compact navigation, local table scrolling, no page-level horizontal overflow.",
-        "tablet": "621–1199px: 2×2 KPI group followed by a full-width chart; local table scrolling; no page-level horizontal overflow.",
+        "mobile": "<=620px: compact app header and single locally scrolling navigation rail; stacked KPIs; chart below; local table scrolling; no page-level horizontal overflow.",
+        "tablet": "621–1199px: compact header and single nav rail; 2×2 KPIs and full-width chart; 1–2 form columns.",
         "desktop": "1200–1599px: fluid work area, overview and chart side by side, 24–32px page padding.",
         "large_desktop": "1600–1919px: more horizontal breathing room and wider tables.",
-        "wide_desktop": "1920–2559px: comparison and cost/context panels side by side.",
+        "wide_desktop": "1920–2559px: only active root panel visible; parallel route/quote/customs context and bounded forms.",
         "ultrawide": "2560–3839px: parallel work areas, bounded forms and panels, dense full-width tables.",
         "four_k": ">=3840px: fluid operational canvas with component-specific caps and more simultaneous information."
       },
@@ -317,7 +327,7 @@
       "depth_cues": "Surface tone and hairline borders do most separation work; do not stack multiple shadows."
     },
     "iconography": {
-      "style": "One coherent 24×24 outline SVG family with rounded joins and ends and 1.5–1.75 optical stroke. Navigation is about 17px, operational icons 16px, KPI icons 16–18px. Neutral at rest; Ink Blue for active navigation and selected/informational states. No emoji.",
+      "style": "One coherent 24×24 outline SVG family with rounded joins and ends and 1.5–1.75 optical stroke. Navigation is about 17px, operational icons 16px, KPI icons 16–18px. Neutral at rest; near-black active icons against yellow navigation selection. No emoji.",
       "stroke_weight": "1.5–1.75 optical stroke",
       "size_scale": "17px navigation; 16px operation; optical correction allowed without changing family or viewBox",
       "preferred_set": "Use the existing product icon set if established; otherwise choose a consistent outline set such as Lucide. Avoid branded/custom Maison Margiela marks."
@@ -335,9 +345,9 @@
     },
     "components": {
       "button_style": "Primary actions use #1C1C1E fill with white label/icon; hover #343436; pressed #0E0E0F. Secondary actions use a white surface, 1px #D6D6D2 outline, near-black label, and neutral #FAFAF9 hover / #F1F1EE pressed. Import is outlined and visually subordinate to Add Item. Buttons are 36–38px high with approximately 8px radius and accessible focus, disabled, and loading states.",
-      "input_style": "White surface, 1px neutral border, 6–8px radius, compact height, visible label, restrained Ink Blue focus border and translucent focus ring. Keep wide-screen inputs bounded to their task rather than stretching them across the canvas.",
+      "input_style": "White bounded inputs with neutral border and near-black focus outline plus yellow halo. Field groups preserve reading order on wide screens.",
       "card_style": "Operational cards use white or very subtle neutral surfaces, 1px border, 10–12px radius, 16–20px padding, and no heavy shadow. Card surfaces are reserved for the overview and focused context; operational details prefer sections, tables, and dividers.",
-      "navigation_pattern": "Warm greige sidebar. Neutral icons and labels by default; selected row keeps a neutral surface, near-black label, Ink Blue icon, and a 2px Ink Blue indicator. Hover remains neutral. Never use a blue sidebar or filled blue navigation item.",
+      "navigation_pattern": "Desktop: six distinct outline icons, yellow active row, near-black icon/text, 600 weight, 3px near-black left indicator, soft-yellow hover. <=840px: compact app header and one locally scrolling horizontal rail with 44px targets and keyboard navigation.",
       "modal_style": "Not shown; infer a simple white dialog with neutral border, 12px radius, restrained shadow, clear title/actions and no glass blur.",
       "list_style": "Compact operational tables with explicit column sizing, 40–44px rows, sticky headers and a sticky first column when useful, explicit units, aligned values, and contained horizontal scrolling on narrow screens.",
       "component_notes": "Toolbar is a compact white strip with a fine neutral separator. FX controls pair currency, editable tabular numerals, neutral refresh action, and independent status feedback. Route cards align amounts and fee rows; actual selection uses a darker neutral border and optional small near-black dot, distinct from the neutral Reference badge. Links use #3F403D and underline on hover. Cost breakdown is a labeled list with right-aligned values and a clear total.",
@@ -362,11 +372,11 @@
             "source": "existing calculateLandedCost totals when valid; existing tax summary fallback otherwise"
           }
         ],
-        "visual": "White or extremely subtle neutral cards, 1px border, 10–12px radius, 16–20px padding, no heavy shadow. Accent may tint the small icon well only. CNY value has the strongest type hierarchy."
+        "visual": "Four white neutral-border cards; identical #FFF7CC icon wells and #7D6814 icons. CNY value leads; all numbers are near-black and tabular."
       },
-      "iconography": "Use the same 24×24 outline SVG family for navigation, buttons, KPI, filters, tables, and logistics surfaces. Rounded joins/ends, consistent 1.5–1.75 stroke, 16–18px optical size. Active and selected states may use Ink Blue; neutral remains the default.",
+      "iconography": "Single 24×24 rounded outline family, 1.75 optical stroke, 16–18px display. Four KPI icon wells use #FFF7CC with #7D6814 icons.",
       "route_selection": "Default white with neutral thin border; hover #FCFCFB and #CACAC6 border; actual selection uses #777873 border and optionally a small near-black dot. Reference badge uses #F1F1EE with #555652. These states must remain visually distinct.",
-      "landed_tabs": "Muted default tabs and near-black text; the selected tab uses a 2px Ink Blue underline. Never fill the tab with blue.",
+      "landed_tabs": "Muted default tabs; selected tab has near-black text and a 2px yellow underline.",
       "exchange_controls": "Refresh control has 30–32px desktop visual size, transparent or white default, neutral icon, #EEEEEB hover, #E3E3E0 pressed, and neutral dark focus ring. On touch layouts preserve an accessible hit area.",
       "declaration_table": {
         "desktop": "At >=1200px width:100%, table-layout:fixed, min-width:0; all columns visible at 1280px and 1440px without horizontal scrolling.",
@@ -396,12 +406,14 @@
           "taxes": "taxCostCny / goodsValueCny × 100",
           "total_additional": "(logisticsCostCny + taxCostCny) / goodsValueCny × 100"
         },
-        "presentation": "One-decimal percentages, text legend with labels and values. Logistics uses Ink Blue, taxes use muted slate blue, and the remaining goods-value baseline uses pale neutral. The central label displays the actual total additional-cost percentage.",
+        "presentation": "Donut: yellow logistics, charcoal tax, neutral remaining value, pale neutral track. Center is near-black. Text legend and summary show labels, amounts, one-decimal percentages, and a short derived insight.",
         "over_100": "If total additional costs exceed goods value, the ring shows the internal logistics-versus-tax composition, the center keeps the actual percentage above 100%, and a text notice explains the condition. Do not show a fabricated remaining-value segment.",
         "zero_value": "When goodsValueCny is zero, do not divide. Show an empty ring, an em dash, and a short instruction to enter goods value."
       },
-      "links": "Ink Blue for links, darker accent and underline on hover. Primary action remains near-black.",
-      "focus_style": "Clear 2px focus indicator using restrained Ink Blue. Focus must remain visible and must not rely on color alone."
+      "links": "Near-black links with restrained accent underline; primary actions remain near-black.",
+      "focus_style": "Visible 2px near-black outline and soft yellow halo; do not rely on color alone.",
+      "quote_table": "All-in CNY and state lead. Selected row has a narrow yellow marker and soft-yellow tint. Each row shows Open plus a button-triggered, keyboard-accessible contextual menu for Select and Delete. Wide desktop shows list beside bounded detail.",
+      "customs_form": "Four groups: basic information; core rates; special taxes/trade remedies; regulatory details and sources. HS Code, effective duty, and VAT lead. Empty special taxes collapse. Inputs use 1–3 columns with bounded widths."
     }
   },
   "design_style": {
@@ -633,8 +645,8 @@
     "No heavy shadows.",
     "No excessive animation or motion that competes with data.",
     "No colorful multi-card KPI system.",
-    "Do not reproduce bright-blue boxes or red handwritten numbers from reference screenshots; they are user annotations, not interface elements.",
-    "No blue primary actions, broad blue surfaces, or blue-filled navigation.",
+    "Do not reproduce bright-yellow boxes or red handwritten numbers from reference screenshots; they are user annotations, not interface elements.",
+    "No yellow primary actions or broad yellow card surfaces; a restrained yellow active navigation row is required.",
     "No decorative success/warning/error colors; semantic colors communicate actual state only.",
     "No global narrow max-width that leaves wide operational screens unused.",
     "No eight-metric 4×2 batch overview; use the four-metric overview and real cost composition.",
@@ -669,19 +681,19 @@
     "rules": [
       "Preserve Wesen identity, established terminology, workflow behavior, calculations, data schema, persistence, and APIs.",
       "Use a fluid app shell with no global max-width; cap forms and supporting panels at component level.",
-      "Use warm greige, white, near-black, neutral grey, and restrained Ink Blue at roughly 5–10% of visual attention.",
+      "Use warm greige, white, near-black, neutral grey, and restrained Wesen Yellow at roughly 5–10% of visual attention.",
       "Use compact wide tables with numeric values aligned right and tabular numerals.",
       "Use the existing calculated landed-cost totals to display logistics, duty, VAT, and cost ratios.",
-      "Use page-specific compositions for declaration, route comparison, freight quotes, landed cost, customs, lookup, and tracking.",
+      "Use page-specific compositions for declaration, route comparison, freight quotes, landed cost, customs, and lookup.",
       "Preserve Chinese, Japanese, and English, keyboard access, WCAG AA contrast, responsive behavior, and reduced-motion preferences."
     ]
   },
   "wesen_adaptation_rules": {
     "preserve": [
       "Warm greige sidebar, white work surfaces, near-black typography and primary actions, thin neutral separators, restrained radius, compact tables, and low shadow.",
-      "Use Wesen Ink Blue only for active navigation, selected icons/tabs, links, informational emphasis, focus, and cost chart data.",
+      "Use Wesen Yellow for identity, active navigation surfaces, selected tabs, focus halo, and logistics chart data.",
       "Keep semantic green, amber, and red for real success, warning, and error states; pair color with a label or icon.",
-      "Keep primary actions near-black. Selected navigation keeps a neutral surface and small blue indicator rather than a filled blue state.",
+      "Keep primary actions near-black. Selected navigation uses a restrained filled yellow row with a near-black indicator and near-black text.",
       "Avoid gradients, glass, heavy shadows, decorative charts, broad color washes, and card-inside-card stacks."
     ],
     "adapt": [
@@ -695,12 +707,19 @@
       "Keep all values and states accessible by label, keyboard focus, and non-color cues."
     ],
     "avoid": [
-      "Do not use blue as a primary button fill, page background, sidebar background, or broad card wash.",
-      "Do not use accent blue to represent success; do not use semantic colors decoratively.",
+      "Do not use yellow as a primary button fill, page background, sidebar background, or broad card wash.",
+      "Do not use yellow to represent success; do not use semantic colors decoratively.",
       "Do not show a fabricated remaining goods-value segment when additional costs exceed 100%.",
       "Do not divide by zero or display NaN or Infinity in the donut.",
       "Do not cap every page at 1440/1520px, center a narrow content column on 4K, or stretch inputs and cards without a task reason.",
       "Do not change calculations, customs/tax rules, FX logic, freight logic, schema, persistence, import/export, or APIs."
     ]
+  },
+  "ui22": {
+    "stylesheet": "src/ui/ui21.css owns base, component, token, and responsive rules; index.html has no inline style",
+    "panel_visibility": "Only .panel.on is visible; wide root grid uses #routes.panel.on",
+    "route_fcl": "FCL editor and confirmed quote comparison belong solely to the routes panel; editor can be collapsed",
+    "legacy_data": "v3 batch tracking and trackings fields remain opaque and inert; new and duplicated batches omit them",
+    "preserved_logic": "Product, FX, duty, VAT, LCL/FCL, quote, customs, allocation, landed-cost, import/export, and persistence calculations remain unchanged"
   }
 }

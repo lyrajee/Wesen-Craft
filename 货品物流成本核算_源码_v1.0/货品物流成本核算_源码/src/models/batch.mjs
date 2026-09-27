@@ -1,7 +1,6 @@
 import {createProductItem, isoNow, makeId} from './product.mjs';
 import {createChargeLine} from './chargeLine.mjs';
 import {createFreightQuote} from './quote.mjs';
-import {createShipmentTracking} from './tracking.mjs';
 
 export const BATCH_SCHEMA_VERSION = 3;
 export const BATCH_STATUSES = [
@@ -59,11 +58,9 @@ export function createBatch(input = {}, {now = isoNow(), regenerateId = false} =
     selectedQuoteId: input.selectedQuoteId ? String(input.selectedQuoteId) : null,
     selectedRoute,
     legacyRoute,
-    tracking: input.tracking && typeof input.tracking === 'object' && !Array.isArray(input.tracking) ? {...input.tracking} : {},
     fcl: {containerType: String(input.fcl?.containerType || '20GP'), chargeLines: Array.isArray(input.fcl?.chargeLines) ? input.fcl.chargeLines.map(createChargeLine) : []},
     allocationBasis: ['weight','volume','value','quantity','custom'].includes(input.allocationBasis) ? input.allocationBasis : null,
     allocationPercentages: input.allocationPercentages && typeof input.allocationPercentages === 'object' ? {...input.allocationPercentages} : {},
-    trackings: Array.isArray(input.trackings) ? input.trackings.map(tracking => createShipmentTracking({...tracking,batchId:input.id||tracking.batchId},now)) : [],
     customs: input.customs && typeof input.customs === 'object' ? {...input.customs} : {},
     estimatedCosts: input.estimatedCosts && typeof input.estimatedCosts === 'object' ? {...input.estimatedCosts} : {},
     actualCosts: input.actualCosts && typeof input.actualCosts === 'object' ? {...input.actualCosts} : {},
@@ -87,8 +84,9 @@ export function createInitialBatch(seed = {}, now = isoNow()) {
 }
 
 export function duplicateBatch(source, name, now = isoNow()) {
+  const {tracking: _legacyTracking, trackings: _legacyTrackings, ...copyable} = source;
   return createBatch({
-    ...source,
+    ...copyable,
     id: undefined,
     name,
     batchNo: '',
@@ -98,8 +96,6 @@ export function duplicateBatch(source, name, now = isoNow()) {
     selectedQuoteId: null,
     selectedRoute: source.selectedRoute === 'fcl' ? null : source.selectedRoute,
     legacyRoute: null,
-    tracking: {},
-    trackings: [],
     customs: {},
     estimatedCosts: {},
     actualCosts: {},

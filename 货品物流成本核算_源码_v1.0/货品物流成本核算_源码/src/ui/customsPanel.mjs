@@ -19,8 +19,12 @@ export function mountCustomsPanel({state,tx,onApply}) {
       <p class="hint">${esc(tx('customsOrigin'))}: ${esc(batch.originCountry)} · ${esc(tx('customsDestination'))}: ${esc(batch.destinationCountry)}</p>
       <p id="customs-notice" class="uploadnote show" role="status" aria-live="polite">${esc(tx(noticeKey))}</p></section>
       <section class="customs-detail"><div class="section-head"><div><h2>${esc(tx('customsManualTitle'))}</h2><div class="hint">${esc(tx('customsManualHint'))}</div></div></div>
-      <form id="customs-form" class="p1-grid">${fields.map(([key,type])=>fieldHtml(key,type)).join('')}
-        <div class="field"><label for="customs-item">${esc(tx('customsApplyTarget'))}</label><select id="customs-item" required><option value="">${esc(tx('customsSelectItem'))}</option>${batch.items.map(item=>`<option value="${esc(item.id)}">${esc(item.name||item.hsCode||item.id)}</option>`).join('')}</select></div>
+      <form id="customs-form" class="customs-form">
+        <fieldset class="customs-group"><legend>${esc(tx('customsGroupBasic'))}</legend><div class="customs-fields">${fields.filter(([key])=>['hsCode','productName','effectiveDate'].includes(key)).map(([key,type])=>fieldHtml(key,type)).join('')}</div></fieldset>
+        <fieldset class="customs-group customs-core"><legend>${esc(tx('customsGroupCore'))}</legend><div class="customs-fields">${fields.filter(([key])=>['mfnRate','provisionalRate','agreementRate','effectiveDutyRate','vatRate'].includes(key)).map(([key,type])=>fieldHtml(key,type)).join('')}</div></fieldset>
+        <details class="customs-group customs-special"${['consumptionTaxRate','antiDumpingRate','countervailingRate','safeguardRate'].some(key=>result?.[key])?' open':''}><summary>${esc(tx('customsGroupSpecial'))}</summary><div class="customs-fields">${fields.filter(([key])=>['consumptionTaxRate','antiDumpingRate','countervailingRate','safeguardRate'].includes(key)).map(([key,type])=>fieldHtml(key,type)).join('')}</div></details>
+        <fieldset class="customs-group"><legend>${esc(tx('customsGroupSource'))}</legend><div class="customs-fields">${fields.filter(([key])=>['regulatoryConditions','source','sourceReference'].includes(key)).map(([key,type])=>fieldHtml(key,type)).join('')}
+        <div class="field"><label for="customs-item">${esc(tx('customsApplyTarget'))}</label><select id="customs-item" required><option value="">${esc(tx('customsSelectItem'))}</option>${batch.items.map(item=>`<option value="${esc(item.id)}">${esc(item.name||item.hsCode||item.id)}</option>`).join('')}</select></div></div></fieldset>
         <div class="p1-actions"><button class="btn primary" type="submit">${esc(tx('customsApply'))}</button></div></form></section></div>`;
     root.querySelector('#customs-search').onclick=search;
     root.querySelector('#customs-form').onsubmit=apply;

@@ -29,24 +29,9 @@
 
 直接双击 `index.html` 可以查看基础页面。联网商品读取接口需要部署到 Vercel 后才能使用。
 
-## 说明
+## 核心功能
 
-报价和税费计算仅用于成本估算，最终金额请以承运商、报关行和税务单据为准。
+产品申报与批次管理、空运 / 拼箱 / 整柜路线比较、整柜费用录入、货代报价、海关税率、汇率、单品到仓成本以及联网商品查询。报价和税费计算仅用于成本估算，最终金额请以承运商、报关行和税务单据为准。
 
-
-## P2 实时物流追踪
-
-追踪记录保存在所属货批中，每批可添加多条海运或空运记录。海运通过 AISStream.io WebSocket 按 MMSI 查询近期 AIS 船位；空运通过 adsb.fi 公共 ADS-B 数据按 ICAO24 地址或明确输入的 ADS-B 呼号查询飞机位置。航班号、呼号和 ICAO24 地址是独立字段；航班号不会被当作呼号查询。空运数据不包含 AWB 货物扫描、起讫地或 ETA，缺失数据保持为空，手工输入的路线和时间会保留。飞机落地或运输到达不会自动表示货物已清关或签收。
-
-在 Vercel 的项目环境变量中仅需为海运配置服务端密钥：
-
-- `AISSTREAM_API_KEY`：在 [AISStream.io](https://aisstream.io/) 获取。密钥仅在服务端 `/api/tracking/sea` 使用，不能放入浏览器代码。
-
-部署在 Vercel 时，请将 `AISSTREAM_API_KEY` 同时配置到 **Preview** 和 **Production** 环境；P2 功能分支生成的是 Preview 部署。`/api/tracking/status` 只返回 `configured: true/false`，不会返回密钥。
-
-空运查询不需要密钥。adsb.fi 公共 API 仅供个人非商业用途，公开端点限速约为每秒 1 次；请遵守 [adsb.fi 数据使用说明](https://github.com/adsbfi/opendata/blob/main/README.md)，页面会标注数据来源。海运查询仅在进入追踪页或手动刷新时执行，空运页面可见时约每 60 秒刷新，页面隐藏或记录完成后停止轮询。Vercel 实例内有短期缓存，不是跨实例共享缓存。AIS/ADS-B 覆盖取决于接收站、目标应答和供应商数据可用性。
-
-地图使用 OpenStreetMap 瓦片并显示署名。路线总览只用实线连接起点与当前位置、虚线连接当前位置与目的地；没有实际历史轨迹时，不绘制或暗示历史航迹。
-
-本地回归检查：在源码目录运行 `node tests/phase0.test.mjs`、`node tests/phase1-a.test.mjs`、`node tests/phase1-b.test.mjs`、`node tests/phase1-c.test.mjs`、`node tests/phase1-d.test.mjs` 和 `node tests/phase2.test.mjs`。
+本地回归检查：在源码目录运行 `node --test tests/phase0.test.mjs tests/phase1-a.test.mjs tests/phase1-b.test.mjs tests/phase1-c.test.mjs tests/phase1-d.test.mjs`。
 

@@ -1,6 +1,0 @@
-{
-  "functions": {
-    "api/tracking/sea.js": { "maxDuration": 30 }
-  }
-}
-

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createProductItem} from '../src/models/product.mjs';
 import {createBatchRepository, createMemoryStorage, STORAGE_KEY} from '../src/repositories/batchRepository.mjs';
+import {calculateLandedCost} from '../src/calculators/landed.mjs';
 
 const initialItems = [
   {name:'保温杯 480ml',sku:'SM-ZB48',qty:24,price:2680,weight:.26,volume:.0019,duty:10,vat:13},
@@ -47,9 +48,38 @@ test('duplicate copies products and rates with fresh product IDs but clears oper
   assert.notEqual(copy.items[0].id, source.items[0].id);
   assert.equal(copy.exchangeRates.JPY_CNY.rate, source.exchangeRates.JPY_CNY.rate);
   assert.equal(copy.quotes.length, 0);
-  assert.deepEqual(copy.tracking, {});
+  assert.equal(Object.hasOwn(copy, 'tracking'), false);
+  assert.equal(Object.hasOwn(copy, 'trackings'), false);
   assert.deepEqual(copy.actualCosts, {});
   assert.equal(copy.status, 'draft');
+});
+
+test('schema v3 legacy tracking fields remain inert and costing is unchanged', () => {
+  const plainRepo = createBatchRepository(createMemoryStorage());
+  const plainBatch = plainRepo.initialize(seed).batches[0];
+  const stored = {
+    schemaVersion: 3,
+    activeBatchId: plainBatch.id,
+    batches: [{
+      ...plainBatch,
+      tracking: {trackingNo: 'legacy-only'},
+      trackings: [{id: 'old-position', mode: 'sea', position: {lat: 1, lng: 2}}]
+    }]
+  };
+  const storage = createMemoryStorage({[STORAGE_KEY]: JSON.stringify(stored)});
+  const repo = createBatchRepository(storage);
+  const legacy = repo.initialize(seed).batches[0];
+  assert.deepEqual(legacy.tracking, stored.batches[0].tracking);
+  assert.deepEqual(legacy.trackings, stored.batches[0].trackings);
+  assert.deepEqual(calculateLandedCost({batch: legacy}).totals, calculateLandedCost({batch: plainBatch}).totals);
+  repo.update(legacy);
+  assert.deepEqual(createBatchRepository(storage).initialize(seed).batches[0].trackings, stored.batches[0].trackings);
+  const copy = repo.duplicate(legacy.id, 'Copy without tracking');
+  assert.equal(Object.hasOwn(copy, 'tracking'), false);
+  assert.equal(Object.hasOwn(copy, 'trackings'), false);
+  const fresh = repo.create({name: 'Fresh batch'});
+  assert.equal(Object.hasOwn(fresh, 'tracking'), false);
+  assert.equal(Object.hasOwn(fresh, 'trackings'), false);
 });
 
 test('legacy array migration creates one active batch and deletion retains a batch', () => {
