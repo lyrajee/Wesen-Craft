@@ -2,7 +2,7 @@ import {createProductItem, isoNow, makeId} from './product.mjs';
 import {createChargeLine} from './chargeLine.mjs';
 import {createFreightQuote} from './quote.mjs';
 
-export const BATCH_SCHEMA_VERSION = 3;
+export const BATCH_SCHEMA_VERSION = 4;
 export const BATCH_STATUSES = [
   'draft', 'waiting_quote', 'route_confirmed', 'booked', 'departed', 'in_transit',
   'arrived', 'customs', 'released', 'domestic_delivery', 'warehouse_received', 'settled'
@@ -62,8 +62,9 @@ export function createBatch(input = {}, {now = isoNow(), regenerateId = false} =
     allocationBasis: ['weight','volume','value','quantity','custom'].includes(input.allocationBasis) ? input.allocationBasis : null,
     allocationPercentages: input.allocationPercentages && typeof input.allocationPercentages === 'object' ? {...input.allocationPercentages} : {},
     customs: input.customs && typeof input.customs === 'object' ? {...input.customs} : {},
-    estimatedCosts: input.estimatedCosts && typeof input.estimatedCosts === 'object' ? {...input.estimatedCosts} : {},
-    actualCosts: input.actualCosts && typeof input.actualCosts === 'object' ? {...input.actualCosts} : {},
+    estimatedCosts: input.estimatedCosts && typeof input.estimatedCosts === 'object' ? JSON.parse(JSON.stringify(input.estimatedCosts)) : {},
+    actualCosts: input.actualCosts && typeof input.actualCosts === 'object' ? JSON.parse(JSON.stringify(input.actualCosts)) : {},
+    settlement: input.settlement && typeof input.settlement === 'object' ? JSON.parse(JSON.stringify(input.settlement)) : null,
     notes: String(input.notes ?? ''),
     archivedAt: input.archivedAt ? String(input.archivedAt) : null,
     createdAt: !regenerateId && input.createdAt ? String(input.createdAt) : now,
@@ -99,6 +100,7 @@ export function duplicateBatch(source, name, now = isoNow()) {
     customs: {},
     estimatedCosts: {},
     actualCosts: {},
+    settlement: null,
     archivedAt: null
   }, {now, regenerateId: true});
 }

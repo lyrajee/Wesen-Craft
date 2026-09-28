@@ -9,9 +9,16 @@ export function mountBatchManager({state, translate, getLang, onActivate, onMuta
   const dialog = document.querySelector('#batchManagerDialog');
   const tableBody = document.querySelector('#batchManagerRows');
   const createForm = document.querySelector('#batchCreateForm');
+  createForm.querySelector('option[value="settled"]')?.remove();
 
   const statusLabel = value => translate(`batchStatus_${value}`);
   const batchGoodsJpy = batch => batch.items.reduce((sum, item) => sum + item.qty * item.price, 0);
+  const settledStatus = batch => {
+    const date = batch.settlement?.settledAt ? new Date(batch.settlement.settledAt).toLocaleDateString(localeFor(getLang())) : '—';
+    const actual = Number(batch.actualCosts?.total);
+    const uplift = Number(batch.settlement?.actualUplift);
+    return `<div class="batch-settled-status"><strong>${escapeHtml(statusLabel('settled'))}</strong><small>${escapeHtml(date)}</small><small>${escapeHtml(translate('settlementActual'))}: ${Number.isFinite(actual) ? `¥${actual.toLocaleString(localeFor(getLang()), {maximumFractionDigits: 2})}` : '—'}</small><small>${escapeHtml(translate('settlementUplift'))}: ${Number.isFinite(uplift) ? `${uplift.toFixed(1)}%` : '—'}</small></div>`;
+  };
 
   function renderSwitcher() {
     const activeId = repository.getActiveBatchId();
@@ -25,12 +32,12 @@ export function mountBatchManager({state, translate, getLang, onActivate, onMuta
     const batches = repository.list().slice().sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
     tableBody.innerHTML = batches.map(batch => {
       const archived = Boolean(batch.archivedAt);
-      const statusOptions = BATCH_STATUSES.map(status => `<option value="${status}"${batch.status === status ? ' selected' : ''}>${escapeHtml(statusLabel(status))}</option>`).join('');
+      const statusOptions = BATCH_STATUSES.filter(status => status !== 'settled').map(status => `<option value="${status}"${batch.status === status ? ' selected' : ''}>${escapeHtml(statusLabel(status))}</option>`).join('');
       return `<tr data-batch-id="${escapeHtml(batch.id)}">
         <td><strong>${escapeHtml(batch.name || translate('unnamedBatch'))}</strong></td>
         <td>${escapeHtml(batch.batchNo)}</td>
         <td>${escapeHtml(batch.supplier)}</td>
-        <td>${archived ? escapeHtml(translate('batchArchived')) : `<select data-batch-status aria-label="${escapeHtml(translate('batchStatusLabel'))}">${statusOptions}</select>`}</td>
+        <td>${archived ? escapeHtml(translate('batchArchived')) : batch.status === 'settled' ? settledStatus(batch) : `<select data-batch-status aria-label="${escapeHtml(translate('batchStatusLabel'))}">${statusOptions}</select>`}</td>
         <td class="batch-number">${batch.items.length}</td>
         <td class="batch-number">¥${batchGoodsJpy(batch).toLocaleString(localeFor(getLang()))}</td>
         <td>${new Date(batch.updatedAt).toLocaleDateString(localeFor(getLang()))}</td>
@@ -94,7 +101,7 @@ export function mountBatchManager({state, translate, getLang, onActivate, onMuta
         originPort: String(form.get('originPort') || '').trim(),
         destinationCountry: String(form.get('destinationCountry') || 'China').trim(),
         destinationPort: String(form.get('destinationPort') || 'Shanghai').trim(),
-        status: String(form.get('status') || 'draft'),
+        status: String(form.get('status') || 'draft') === 'settled' ? 'draft' : String(form.get('status') || 'draft'),
         exchangeRates: state.activeBatch.exchangeRates,
         declarationSettings: state.activeBatch.declarationSettings,
         selectedRoute: state.activeBatch.selectedRoute

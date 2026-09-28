@@ -1178,3 +1178,517 @@ a:not(.btn):hover {
     transition: none;
   }
 }
+
+/* P3.1 cost close */
+.cost-close-card {
+  overflow: visible;
+}
+
+#estimatedLandedContent[hidden] {
+  display: none;
+}
+
+.settlement-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin-bottom: 18px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.settlement-summary > div {
+  min-width: 0;
+  padding: 14px 18px;
+  border-right: 1px solid var(--line);
+}
+
+.settlement-summary > div:last-child {
+  border-right: 0;
+}
+
+.settlement-summary span,
+.settlement-snapshot-meta span,
+.settlement-status span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.settlement-summary strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+
+.variance-value.over { color: var(--error); }
+.variance-value.under { color: var(--success); }
+.variance-value.neutral { color: var(--ink); }
+
+.cost-close-tabs {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+}
+
+.cost-close-tabs button {
+  min-height: 42px;
+  padding: 8px 13px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.cost-close-tabs button:hover {
+  color: var(--ink);
+  background: var(--accent-soft);
+}
+
+.cost-close-tabs button.on {
+  border-bottom-color: var(--ink);
+  background: var(--accent-soft);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.cost-close-body {
+  min-width: 0;
+}
+
+.settlement-empty {
+  padding: 24px 0 28px;
+  text-align: left;
+}
+
+.settlement-empty h3,
+.settlement-section-head h3,
+.actual-lines-head h3 {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.35;
+  font-weight: 650;
+}
+
+.settlement-empty p,
+.settlement-section-head p,
+.actual-lines-head p,
+.settlement-close-bar p {
+  margin: 4px 0 0;
+  max-width: 72ch;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.settlement-empty .btn {
+  margin-top: 14px;
+}
+
+.settlement-snapshot-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 0 24px;
+  padding: 4px 0 20px;
+}
+
+.settlement-snapshot-meta > div {
+  min-width: 0;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.settlement-snapshot-meta b {
+  display: block;
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+}
+
+.settlement-snapshot-meta > .btn {
+  align-self: end;
+  justify-self: start;
+  margin-top: 10px;
+}
+
+.settlement-section-head,
+.actual-lines-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.settlement-section-head > strong {
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.actual-cost-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 16px 18px;
+  margin-top: 18px;
+}
+
+.actual-cost-field {
+  min-width: 0;
+}
+
+.actual-cost-field label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--secondary-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.actual-cost-control {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  transition: border-color var(--motion-fast) ease, box-shadow var(--motion-fast) ease;
+}
+
+.actual-cost-control:focus-within {
+  border-color: var(--focus-border);
+  box-shadow: var(--focus);
+}
+
+.actual-cost-control > span {
+  padding-left: 11px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.actual-cost-control input {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 7px 10px 7px 5px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.actual-cost-control input:disabled {
+  color: var(--secondary-text);
+}
+
+.cost-copy {
+  min-height: 30px;
+  margin-top: 3px;
+  padding: 3px 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: left;
+}
+
+.cost-copy:hover {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.actual-lines-head {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.actual-lines {
+  margin-top: 12px;
+}
+
+.actual-line {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.2fr) minmax(160px, .8fr) minmax(130px, .6fr) minmax(180px, 1fr) 44px;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.actual-line input,
+.actual-line select {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 7px 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.actual-line input:focus,
+.actual-line select:focus {
+  border-color: var(--focus-border);
+  outline: 0;
+  box-shadow: var(--focus);
+}
+
+.actual-line .remove {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+}
+
+.settlement-inline-empty {
+  margin: 0;
+  padding: 18px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.settlement-comparison .table,
+.actual-item-allocation .table {
+  min-width: 760px;
+}
+
+.settlement-comparison .comparison-total td {
+  border-top: 1px solid var(--line-strong);
+  background: var(--surface-quiet);
+  font-weight: 650;
+}
+
+.actual-item-allocation {
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.actual-item-allocation .settlement-section-head > span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.settlement-close-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  margin-top: 24px;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--line);
+}
+
+.settlement-close-bar strong {
+  font-size: 14px;
+}
+
+.settlement-message {
+  margin: 16px 0 0;
+  padding: 10px 12px;
+  border-radius: 7px;
+  background: var(--surface-quiet);
+  color: var(--secondary-text);
+  font-size: 12px;
+}
+
+.settlement-message[data-state="success"] {
+  color: var(--success);
+}
+
+.settlement-message[data-state="error"] {
+  color: var(--error);
+}
+
+.settlement-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 16px;
+  padding: 13px 15px;
+  border: 1px solid color-mix(in srgb, var(--success) 28%, var(--line));
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--success) 7%, var(--surface));
+}
+
+.settlement-status strong {
+  color: var(--success);
+  font-size: 14px;
+}
+
+.settlement-uplift {
+  display: flex;
+  gap: 24px;
+}
+
+.settlement-uplift span {
+  white-space: nowrap;
+}
+
+.settlement-uplift b,
+.settlement-uplift-note b {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.settlement-uplift-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.batch-settled-status {
+  display: grid;
+  gap: 1px;
+}
+
+.batch-settled-status strong {
+  color: var(--success);
+  font-size: 11px;
+}
+
+.batch-settled-status small {
+  color: var(--muted);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.settlement-locked .btn.file:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: .58;
+}
+
+@media (min-width: 1920px) {
+  #landed > .card {
+    display: block;
+  }
+
+  #estimatedLandedContent:not([hidden]) {
+    display: grid;
+    grid-template-columns: minmax(420px, .9fr) minmax(0, 1.1fr);
+    align-content: start;
+    column-gap: 32px;
+  }
+
+  #estimatedLandedContent .landed-tabs,
+  #estimatedLandedContent .table-scroll-hint,
+  #estimatedLandedContent .tablewrap {
+    grid-column: 1 / -1;
+  }
+
+  #estimatedLandedContent #allocationControls {
+    grid-column: 1;
+  }
+
+  #estimatedLandedContent #landedKpis {
+    grid-column: 2;
+  }
+
+  .actual-cost-grid {
+    grid-template-columns: repeat(7, minmax(150px, 1fr));
+  }
+
+  .settlement-snapshot-meta {
+    grid-template-columns: repeat(6, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 1020px) {
+  .settlement-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .settlement-summary > div:nth-child(2) {
+    border-right: 0;
+  }
+
+  .settlement-summary > div:nth-child(-n+2) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .settlement-snapshot-meta,
+  .actual-cost-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .actual-line {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .actual-line .remove {
+    justify-self: end;
+  }
+}
+
+@media (max-width: 620px) {
+  .settlement-summary {
+    margin-bottom: 14px;
+  }
+
+  .settlement-summary > div {
+    padding: 11px 10px;
+  }
+
+  .settlement-summary strong {
+    font-size: 15px;
+  }
+
+  .cost-close-tabs button {
+    min-height: 44px;
+  }
+
+  .settlement-snapshot-meta,
+  .actual-cost-grid,
+  .actual-line {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .actual-cost-grid {
+    gap: 13px;
+  }
+
+  .actual-cost-control,
+  .actual-cost-control input,
+  .actual-line input,
+  .actual-line select {
+    min-height: 44px;
+  }
+
+  .settlement-section-head,
+  .actual-lines-head,
+  .settlement-close-bar,
+  .settlement-status {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .actual-lines-head .btn,
+  .settlement-close-bar .btn,
+  .settlement-status .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .settlement-uplift {
+    flex-wrap: wrap;
+    gap: 6px 18px;
+  }
+
+  .actual-line .remove {
+    justify-self: start;
+    width: 44px;
+    height: 44px;
+  }
+}
