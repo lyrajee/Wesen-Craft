@@ -176,6 +176,7 @@ export function mountCostClosePanel({state, root, estimatedSection, tx, money, g
       });
     });
     root.querySelector('[data-close-settlement]')?.addEventListener('click', () => {
+      if (!globalThis.confirm(`${tx('settlementCloseTitle')}\n\n${tx('settlementCloseHint')}`)) return;
       try {
         if (!ensureSnapshot()) { render(); return; }
         settleBatch(batch());
