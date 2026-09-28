@@ -109,7 +109,7 @@ export function mountCostClosePanel({state, root, estimatedSection, tx, money, g
       <select aria-label="${escapeHtml(tx('settlementLineCategory'))}" data-line-field="category" ${locked ? 'disabled' : ''}>${COST_CLOSE_CATEGORIES.map(key => `<option value="${key}"${line.category === key ? ' selected' : ''}>${escapeHtml(tx(`settlementCategory_${key}`))}</option>`).join('')}</select>
       <input aria-label="${escapeHtml(tx('settlementLineAmount'))}" data-line-field="amount" type="number" min="0" step="0.01" value="${inputAmount(line.amount)}" placeholder="0.00" ${locked ? 'disabled' : ''}>
       <input aria-label="${escapeHtml(tx('settlementLineNote'))}" data-line-field="note" value="${escapeHtml(line.note)}" placeholder="${escapeHtml(tx('settlementLineNote'))}" ${locked ? 'disabled' : ''}>
-      ${locked ? '' : `<button class="remove" type="button" data-remove-line aria-label="${escapeHtml(tx('settlementRemoveLine'))}">×</button>`}
+      ${locked ? '' : `<button class="remove" type="button" data-remove-line aria-label="${escapeHtml(tx('settlementRemoveLine'))}"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-delete"></use></svg></button>`}
     </div>`).join('');
     return `<section class="actual-cost-entry">
       <div class="settlement-section-head"><div><h3>${escapeHtml(tx('settlementActualEntry'))}</h3><p>${escapeHtml(tx('settlementActualHint'))}</p></div><strong>${actualSummary?.valid ? money(actualSummary.totals.total) : '—'}</strong></div>
